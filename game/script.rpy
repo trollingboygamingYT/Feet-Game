@@ -1,5 +1,6 @@
 ﻿
 define e = Character("Eileen")
+define a = Character("Test")
 
 # The game starts here.
 
