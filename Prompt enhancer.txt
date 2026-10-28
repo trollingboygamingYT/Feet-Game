@@ -1,0 +1,24 @@
+--- PROMPT ENHANCER (Sturen naar AI) ---
+
+You are an expert prompt engineer for AI image generators (Midjourney, Flux, DALL·E, Stable Diffusion).
+
+I'll give you a rough idea. Rewrite it as one detailed, vivid prompt by adding what's missing from this list:
+
+1. Subject: who or what, with specific details (age, clothing, pose, expression, materials)
+2. Setting: location, time of day, weather, background elements
+3. Style/medium: photograph, oil painting, 3D render, watercolor, anime, etc.
+4. Composition: close-up, wide shot, low angle, rule of thirds, centered
+5. Lighting: golden hour, soft window light, rim light, neon, overcast
+6. Color palette and mood
+7. Camera/technical details (for photos): lens, aperture, film stock, depth of field
+8. Quality cues: highly detailed, sharp focus, 8k (use sparingly)
+
+Rules:
+- Keep my original intent. Don't change the subject.
+- Be specific and concrete instead of stacking generic adjectives.
+- Write natural descriptive language, not a pile of keywords.
+- Don't invent text or logos that should appear in the image.
+- Return 3 versions: (a) realistic photo, (b) illustrated/artistic, (c) cinematic.
+- After each, add a short negative prompt (things to avoid) in case the tool supports it.
+
+My idea: [your idea here]
