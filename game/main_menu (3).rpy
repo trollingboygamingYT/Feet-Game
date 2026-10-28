@@ -13,10 +13,14 @@
 #   - Unique title "Sole Mates": every letter drops in with a bounce, then
 #     gently bobs in a wave. Letters are a plum -> rose gradient with a
 #     white rim and a soft pink glow.
-#   - A trail of footprints "walks" across the right side of the screen.
+#   - A cherry-blossom tree fills the right side and drops petals that
+#     drift down the screen.
 #   - Twinkling sparkles around the title and a heart divider.
-#   - Fixed: the character art now floats up and down (the old animation
-#     got stuck after sliding in).
+#   - Fixed: the character art now floats up and down, and the rising
+#     bubbles now keep looping (the old animations stopped after one pass).
+#
+#  The Load / Save / Preferences / About / Help screens are styled in
+#  game_menu_theme.rpy (put both files in the game/ folder).
 # ---------------------------------------------------------------
 
 # ---------- Easy knobs ----------
@@ -49,27 +53,72 @@ init python:
     def mm_mix(a, b, t):
         return Color(a).interpolate(Color(b), t)
 
-    # A footprint drawn from soft dots (sole + heel + 5 toes), no image needed.
-    # Tweak the numbers in blob(...) if you want a different foot shape.
-    def mm_footprint(col, mirror=False):
-        parts = []
-        m = -1 if mirror else 1
+    # ---- Cherry-blossom tree, drawn from rotated bars (branches) and soft dots ----
+    def mm_build_tree(base_x, base_y, seed=7):
+        rng = random.Random(seed)
+        branches = []
+        blossoms = []
 
-        def blob(cx, cy, size, zx=1.0, zy=1.0):
-            t = Text(u"●", size=size, color=col)
-            parts.append(Transform(t, xanchor=0.5, yanchor=0.5,
-                                xpos=100 + m * cx, ypos=100 + cy,
-                                xzoom=zx, yzoom=zy))
+        def grow(x, y, length, thick, ang, depth):
+            col = mm_mix("#6b2d4a", "#a85a7c", (4 - depth) / 4.0)
+            bar = Solid(col, xsize=max(int(thick), 2), ysize=int(length) + 2)
+            branches.append(Transform(bar, rotate=ang, transform_anchor=True,
+                                      anchor=(0.5, 1.0), rotate_pad=False,
+                                      xpos=int(x), ypos=int(y)))
+            ex = x + length * math.sin(math.radians(ang))
+            ey = y - length * math.cos(math.radians(ang))
+            if depth == 0:
+                blossoms.append((ex, ey, 62))
+            else:
+                if depth <= 2:
+                    blossoms.append((ex, ey, 38))
+                for side in (-1, 1):
+                    grow(ex, ey,
+                         length * rng.uniform(0.70, 0.78),
+                         thick * 0.68,
+                         ang + side * rng.uniform(17, 31) + rng.uniform(-4, 4),
+                         depth - 1)
 
-        blob(5, -14, 105, 0.75, 0.85)    # ball of the foot
-        blob(8, 18, 70, 0.70, 1.00)      # arch
-        blob(5, 44, 62)                  # heel
-        blob(-17, -55, 38)               # big toe
-        blob(2, -65, 30)
-        blob(17, -59, 26)
-        blob(29, -47, 23)
-        blob(37, -32, 19)                # little toe
-        return Fixed(*parts, xysize=(200, 200))
+        grow(base_x, base_y, 270, 36, 2, 4)
+
+        puff_cols = ["#ffaac88c", "#ffc2d68c", "#ffb3cd8c", "#ffd9e6a0"]
+        flower_cols = ["#ffffff", "#ffe3ec", "#ff8fb5", "#ffffff"]
+        puffs = []
+        flowers = []
+
+        def put(lst, text, size, col, cx, cy):
+            lst.append(Transform(Text(text, size=size, color=col),
+                                 xanchor=0.5, yanchor=0.5,
+                                 xpos=int(cx), ypos=int(cy)))
+
+        for (bx, by, r) in blossoms:
+            for k in range(5):
+                put(puffs, u"●", rng.choice([60, 76, 92]), rng.choice(puff_cols),
+                    bx + rng.uniform(-r, r) * 0.9, by + rng.uniform(-r, r) * 0.9)
+            for k in range(4):
+                put(flowers, rng.choice([u"✿", u"❀"]), rng.choice([22, 28, 34]),
+                    rng.choice(flower_cols),
+                    bx + rng.uniform(-r, r), by + rng.uniform(-r, r))
+
+        kids = branches + puffs + flowers
+        return Fixed(*kids, xysize=(config.screen_width, config.screen_height))
+
+    # Falling petals: (x, x_end, y_start, delay, duration, spin, glyph, size, colour)
+    mm_prng = random.Random(21)
+    mm_petals = []
+    for mm_i in range(26):
+        px = mm_prng.uniform(0.58, 0.96)
+        mm_petals.append((
+            px,
+            px + mm_prng.uniform(-0.14, 0.04),
+            mm_prng.uniform(0.24, 0.52),
+            mm_prng.uniform(0.0, 12.0),
+            mm_prng.uniform(9.0, 14.0),
+            mm_prng.uniform(-420, 420),
+            mm_prng.choice([u"✿", u"❀", u"●"]),
+            mm_prng.choice([18, 22, 26, 32]),
+            mm_prng.choice(["#ffffffcc", "#ffc2d6ee", "#ff9fbfdd", "#ffe3ecee"]),
+        ))
 
     # Fixed random layout for the floating bubbles: (x, size, delay, duration, colour)
     mm_rng = random.Random(11)
@@ -83,26 +132,6 @@ init python:
             mm_rng.choice(["#ffffff55", "#ffffff44", "#ffe3ecaa", "#ffd0b855"]),
         ))
 
-    # The footprint trail: a diagonal path across the right side of the screen,
-    # alternating left/right foot.  (x, y, rotation, is_left_foot, delay)
-    def mm_build_steps(n=11):
-        W = float(config.screen_width)
-        H = float(config.screen_height)
-        x0, y0 = 0.50 * W, 0.93 * H
-        x1, y1 = 0.90 * W, 0.14 * H
-        ang = math.atan2(x1 - x0, -(y1 - y0))
-        out = []
-        for i in range(n):
-            t = i / (n - 1.0)
-            side = -1 if i % 2 == 0 else 1
-            px = x0 + (x1 - x0) * t + side * 44 * math.cos(ang)
-            py = y0 + (y1 - y0) * t + side * 44 * math.sin(ang)
-            out.append((px / W, py / H, math.degrees(ang) + side * 6, side < 0, i * 0.9))
-        return out
-
-    mm_steps = mm_build_steps(11)
-    mm_step_cycle = 11 * 0.9 + 5.5
-
     # Sparkles around the title: (x, y, size, delay, duration)
     mm_sparkles = [
         (0.30, 0.13, 34, 0.0, 2.6),
@@ -112,8 +141,7 @@ init python:
     ]
 
 define mm_bg = mm_vgradient("#fff3e8", "#f7a8c2")
-define mm_foot_l = mm_footprint("#c8567f", mirror=True)
-define mm_foot_r = mm_footprint("#c8567f", mirror=False)
+define mm_tree = mm_build_tree(0.735 * config.screen_width, config.screen_height + 10)
 
 
 # ---------- Animations ----------
@@ -136,7 +164,7 @@ transform mm_float(x, delay, dur):
             block:
                 ease 3.0 xoffset 30
                 ease 3.0 xoffset -30
-                repeat
+                repeat 6
         repeat
 
 transform mm_glow(x, y, dur):
@@ -201,20 +229,46 @@ transform mm_letter(delay):
         ease 1.3 yoffset 7
         repeat
 
-# One footprint: fades in, stays, fades out, waits, repeats (trail restarts)
-transform mm_step(x, y, rot, delay, cyc):
+# The whole tree sways very slightly around its base
+transform mm_tree_sway(px, py):
+    transform_anchor True
+    anchor (px, py)
+    xpos px
+    ypos py
+    rotate_pad False
+    block:
+        ease 5.0 rotate 0.7
+        ease 5.0 rotate -0.7
+        repeat
+
+# One falling petal: drifts down, sways, spins, fades; then starts again
+transform mm_petal(x, x2, y0, delay, dur, spin):
+    transform_anchor True
     anchor (0.5, 0.5)
-    xpos x
-    ypos y
-    rotate rot
-    zoom 1.3
     alpha 0.0
+    xpos x
+    ypos y0
     pause delay
     block:
-        ease 0.5 alpha 0.55
-        pause 3.2
-        ease 1.3 alpha 0.0
-        pause cyc - 5.0
+        xpos x
+        ypos y0
+        alpha 0.0
+        rotate 0
+        parallel:
+            linear dur ypos 1.1
+        parallel:
+            linear dur xpos x2
+        parallel:
+            linear dur * 0.12 alpha 1.0
+            pause dur * 0.68
+            linear dur * 0.2 alpha 0.0
+        parallel:
+            linear dur rotate spin
+        parallel:
+            block:
+                ease 2.0 xoffset 26
+                ease 2.0 xoffset -26
+                repeat 5
         repeat
 
 # Twinkling sparkle
@@ -260,6 +314,8 @@ style mm_heart:
     size 36
     idle_color "#ffffff00"
     hover_color "#ffffff"
+    selected_idle_color "#e0407f"
+    selected_hover_color "#ffffff"
     yalign 0.5
 
 style mm_version:
@@ -313,9 +369,10 @@ screen main_menu():
     for (bx, bsize, bdelay, bdur, bcol) in mm_bubbles:
         text "●" size bsize color bcol at mm_float(bx, bdelay, bdur)
 
-    # walking footprint trail
-    for (sx, sy, srot, sleft, sdelay) in mm_steps:
-        add (mm_foot_l if sleft else mm_foot_r) at mm_step(sx, sy, srot, sdelay, mm_step_cycle)
+    # cherry-blossom tree on the right, with petals drifting down
+    add mm_tree at mm_tree_sway(int(0.735 * config.screen_width), config.screen_height + 10)
+    for (ptx, ptx2, pty, ptdelay, ptdur, ptspin, ptglyph, ptsize, ptcol) in mm_petals:
+        text ptglyph size ptsize color ptcol at mm_petal(ptx, ptx2, pty, ptdelay, ptdur, ptspin)
 
     # optional character art on the right
     if renpy.loadable("gui/menu_art.png"):
