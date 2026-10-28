@@ -350,60 +350,93 @@ style navigation_button_text:
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#main-menu
 
+
 screen main_menu():
 
-    ## This ensures that any other menu screen is replaced.
     tag menu
 
-    add gui.main_menu_background
+    # Background artwork
+    add "gui/main_menu.png"
+    add Solid("#17132355")
 
-    ## This empty frame darkens the main menu.
-    frame:
-        style "main_menu_frame"
+    # Main title and subtitle
+    vbox:
+        xpos 100
+        yalign 0.22
+        spacing 8
 
-    ## The use statement includes another screen inside this one. The actual
-    ## contents of the main menu are in the navigation screen.
-    use navigation
+        text "S O L E   S O C I E T Y":
+            size 20
+            color "#E4BBAA"
 
-    if gui.show_name:
+        text "Every Step":
+            size 76
+            color "#FFF4ED"
+            bold True
 
-        vbox:
-            style "main_menu_vbox"
+        text "Tells a Story.":
+            size 54
+            color "#D9A7BC"
 
-            text "[config.name!t]":
-                style "main_menu_title"
+        null height 10
 
-            text "[config.version]":
-                style "main_menu_version"
+        text "STYLE YOUR WORLD. WRITE YOUR STORY.":
+            size 16
+            color "#D5C5D8"
 
+    # Main navigation
+    vbox:
+        xpos 105
+        yalign 0.67
+        spacing 14
 
-style main_menu_frame is empty
-style main_menu_vbox is vbox
-style main_menu_text is gui_text
-style main_menu_title is main_menu_text
-style main_menu_version is main_menu_text
+        textbutton "  NEW GAME  ":
+            action Start()
+            xsize 340
+            text_size 25
+            text_color "#FFF4ED"
+            text_hover_color "#FFFFFF"
+            background Solid("#754D70")
+            hover_background Solid("#B47F9B")
+            padding (20, 15)
 
-style main_menu_frame:
-    xsize 420
-    yfill True
+        textbutton "  CONTINUE  ":
+            action ShowMenu("load")
+            xsize 340
+            text_size 23
+            text_color "#E8D9E8"
+            text_hover_color "#FFFFFF"
+            background Solid("#30243A")
+            hover_background Solid("#51405C")
+            padding (20, 14)
 
-    background "gui/overlay/main_menu.png"
+        textbutton "  SETTINGS  ":
+            action ShowMenu("preferences")
+            xsize 340
+            text_size 23
+            text_color "#E8D9E8"
+            text_hover_color "#FFFFFF"
+            background Solid("#30243A")
+            hover_background Solid("#51405C")
+            padding (20, 14)
 
-style main_menu_vbox:
-    xalign 1.0
-    xoffset -30
-    xmaximum 1200
-    yalign 1.0
-    yoffset -30
+        textbutton "  QUIT GAME  ":
+            action Quit(confirm=True)
+            xsize 340
+            text_size 23
+            text_color "#E8D9E8"
+            text_hover_color "#FFFFFF"
+            background Solid("#30243A")
+            hover_background Solid("#51405C")
+            padding (20, 14)
 
-style main_menu_text:
-    properties gui.text_properties("main_menu", accent=True)
+    # Small footer
+    text "AN ORIGINAL GAME BY NOAH & ILYANO":
+        xalign 0.5
+        yalign 0.96
+        size 13
+        color "#C2ADC9"
 
-style main_menu_title:
-    properties gui.text_properties("title")
-
-style main_menu_version:
-    properties gui.text_properties("version")
 
 
 ## Game Menu screen ############################################################
