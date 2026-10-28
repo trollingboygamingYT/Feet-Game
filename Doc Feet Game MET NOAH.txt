@@ -1,0 +1,89 @@
+JSON PROMPTS; FEET GAME
+
+Characters; Claire Redfield, Lara Croft, Chun-Li, Tifa (FF), D.VA, Noah Hennin, Harley Quinn, Ayana Shirakawa, Mira kitagawa
+
+1.
+{
+  "subject": "An amazing woman with blonde hair, glowing blue eyes, and small pointed fangs",
+  "action": "Standing in a dynamic, expressive pose looking down",
+  "setting": "A light, atmospheric, ethereal background",
+  "composition": "Dramatic low-angle portrait shot",
+  "camera": "35mm lens at a low angle",
+  "lighting": "Cinematic blue lighting with deep shadows",
+  "style": "High-quality digital anime illustration, sharp lines, vibrant gradients",
+  "colors": "Blue, white, gold, silver",
+  "textToRender": "",
+  "aspectRatio": "9:16",
+  "negative": "text, watermarks, logos, low resolution, blurry"
+}
+AND 
+
+An original anime portrait of an amazing woman with long blonde hair, glowing blue eyes, and small pointed fangs, wearing an intricate white dress outfit and a silver crescent moon pendant. She is captured in a dynamic, expressive pose, looking down with a confident expression. The scene uses a dramatic low-angle composition with cinematic blue lighting, creating deep shadows and a mysterious atmosphere against a soft, light, ethereal background. The style is high-quality digital illustration with sharp line work and vibrant color gradients.
+
+
+
+
+2. 
+{
+  "subject": "Mysterious woman with fox ears, long black hair with emerald highlights, wearing an emerald and black kimono",
+  "action": "Holding an ornate folding fan near her lips with an enigmatic expression, surrounded by floating energy spirit foxes",
+  "setting": "Ancient Japanese shrine in a misty bamboo forest at night",
+  "composition": "Centered portrait with a low-angle perspective",
+  "camera": "50mm lens at a low angle",
+  "lighting": "Soft moonlight with glowing green highlights",
+  "style": "High-quality anime fantasy illustration with precise line work and rich color gradients",
+  "colors": "Emerald green, black, gold, white",
+  "textToRender": "",
+  "aspectRatio": "16:9",
+  "negative": "text, watermark, logo, blurry, distorted features"
+}
+ AND
+
+An anime portrait of a mysterious woman with long silky black hair and emerald highlights styled in a high half-up ponytail with gold pins and fox ears, wearing a detailed emerald and black kimono with gold leaf embroidery. She is holding an ornate folding fan near her lips with a playful, enigmatic gaze, surrounded by translucent green energy spirit foxes. The setting is an ancient Japanese shrine in a misty bamboo forest under a full moon with floating fireflies and autumn leaves. The image features soft moonlight and glowing green lighting, shot from a low-angle perspective with precise line work and rich emerald, black, and gold gradients.
+
+
+
+3.
+{
+  "subject": "Ethereal woman with long lavender hair, violet eyes with star reflections, and golden constellation freckles",
+  "action": "Gently reaching toward a miniature galaxy hovering above her fingertips",
+  "setting": "A magical night sky filled with swirling nebulae, distant planets, and constellations",
+  "composition": "Graceful three-quarter portrait",
+  "camera": "85mm lens at eye level",
+  "lighting": "Soft violet and indigo ambient light with subtle golden highlights and cosmic glow",
+  "style": "High-quality fantasy anime digital illustration with intricate hair details, luminous gradients, and delicate line work",
+  "colors": "Lavender, violet, midnight-blue, gold, silver",
+  "textToRender": "",
+  "aspectRatio": "9:16",
+  "negative": "text, watermarks, logos, low resolution, blurry, distorted face, extra limbs"
+}
+AND
+
+An ethereal woman with extremely long lavender hair in two elegant braids and luminous violet eyes with star-shaped reflections, adorned with golden constellation freckles and a crescent-shaped crystal on her forehead. She wears an elaborate midnight-blue celestial dress with silver embroidery and gold chains, reaching toward a miniature galaxy hovering at her fingertips. The setting is a magical night sky with swirling nebulae and planets. The composition is a graceful three-quarter portrait shot using a 85mm lens. Lighting is soft violet and indigo with golden highlights. The style is a high-quality fantasy anime digital illustration featuring intricate line work, glowing particles, and a purple, blue, and gold color palette.
+
+
+
+4.
+{
+  "subject": "Stunning woman with crimson wolf-cut hair, glowing golden-orange eyes, and elegant black horns",
+  "action": "Smirking confidently while resting one hand against a dark decorated sword",
+  "setting": "In front of an ancient castle with swirling smoke, burning crimson clouds, and distant glowing lava cracks",
+  "composition": "Close-up portrait with centered subject",
+  "camera": "50mm lens at eye level",
+  "lighting": "Dramatic side lighting with intense red rim lights and deep shadows",
+  "style": "High-quality anime digital illustration with bold line work, realistic metallic reflections, and intricate details",
+  "colors": "Crimson, black, gold, orange",
+  "textToRender": "",
+  "aspectRatio": "16:9",
+  "negative": "text, watermarks, logos"
+}
+AND
+
+An anime digital illustration of a stunning woman with a crimson wolf-cut hairstyle, glowing golden-orange eyes, and two elegant black horns. She wears a gothic black and burgundy outfit with ornate demon armor, golden chains, and a ruby pendant, smirking confidently while resting one hand on a decorated sword. She is posed before an ancient castle set against burning crimson clouds and glowing lava cracks. The image features dramatic side lighting with intense red rim lights, bold line work, and high-quality metallic reflections, captured in a close-up portrait at eye level.
+
+
+5.
+A beautiful woman with long brown hair, blue eyes, a flower on her hair. She wears a white dress with a flower pattern on it, without any shoes so you can see her feet. Make her have something unique that attracts everyone's attention. smirking confidently at the screen while both her hands are behind her. She is posed before blossom tree's with a beautiful path heading further while there are flowers falling behind her. Make her stunning. The image also features dramatic white lightning behind her, bold line work, high quality reflections. Make it so u see her full body
+
+
+
