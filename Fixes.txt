@@ -1,0 +1,8 @@
+fixes 
+
+Face and eye detailer (you already have the tools). Impact Pack is installed. Add a FaceDetailer node with a face_yolov8m bbox detector, which comes with Impact Subpack. It crops the face, redraws it at full resolution, and pastes it back. Use denoise 0.35-0.5. Since your model chain uses the DMD2 LoRA, keep 8 steps and CFG 1 in the detailer too.
+Hands. Same idea with a hand detector (hand_yolov8s) in a second Detailer. Use a slightly lower denoise (0.3-0.4) so it fixes the fingers without inventing a new hand.
+Feet. There’s no standard feet detector in Impact Subpack. Two options: mask the feet by hand and inpaint them with your ComfyUI-Inpaint-CropAndStitch node, or look for a feet/foot YOLO detector on CivitAI. I haven’t verified that a good one exists. For inpainting, prompt only for the feet, for example high heels, ankle strap, toes, foot, detailed.
+Hires pass. After the first generation, upscale 1.5x and run a second sampler at denoise 0.35-0.45. This improves everything at once.
+Drop the DMD2 LoRA for the final pass. Speed LoRAs lose some fine detail. For finished images, try 28 steps, CFG 5.5, no DMD2 on the detailer passes.
+Try several seeds. Hands and feet are the hardest parts, and you’ll often need 4-8 attempts to get a good base.
