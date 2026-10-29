@@ -1,3 +1,114 @@
+Brainstorming story (NIET FINAL VERSIE)
+
+GEEF DE OPTIE VAN HET BEGIN IN DE GAME OM EEN CHARACTER NAAM TE KIEZEN, MET DAARONDER 3 SUGGESTIES
+--> NOG TE KIEZEN
+
+
 Max friendship --> Unlock --> Game (Clicker, ...) --> Zo verder
 Friendship points --> Goeie keuzes nemen
+Verlies points --> Slechte keuzes
+Friendship points nodig om maximum te zijn verschilt per character
+Alle FP worden in een combinatie gestoken als in-game currency voor skins, etc.
+
+MENU: Characters GUI --> toon alle girls met een slot als je ze nog niet heb unlocked, als je ze wel hebt unlocked toon de FP per character en toon een % met hoeveel je al van de character dialogue hebt unlocked, je kan dan ook per character klikken zodat je iedere dialogue kan zien met de resultaten erbij van je vorige run ( Je kan ze ook replayen, om betere resultaten te krijgen. Als je bv Negatief uitkomt ).
+ 
+Skin GUI --> Waar je de characters ziet, die een skin kunnen krijgen met unlocked/locked ( bij locked kan je dan de skin kopen voor bepaald FP ) , Je kan ze dan ook equippen wanneer ze unlocked zijn.
+
+Minigame GUI --> Toon alle minigames die je hebt unlocked, een slot achter de gene die je nog niet hebt unlocked.
+
+Skins en minigames worden in een SHOP GUI gestopt onder Play
+
+dus Main menu GUI wordt als volgt;
+PLAY --> Start New Game, Continue, Load Game
+SHOP --> SKINS GUI, MINIGAME GUI
+SETTINGS --> Alle instellingen worden nog later besproken
+QUIT --> Leaved de game
+
+REWARD SYSTEM ;
+het 100% van een character ( DUS ALLE DIALOGUES POSITIEF ) geeft je al een minigame die je unlocked maar nog moet kopen met FP, Dan wanneer je een bepaald aantal characters 100% krijg je nog extra FP of Extra Skins/Minigames
+
+Characters naam is nog niet gerevealed totdat ze het zelf zegt hoe ze noemt!!!
+
+Ieder character heeft ander background ( ANDER VERHAAL )
+
+Voorbeeld story;
+Story; begint met jongen (YOU)
+
+Intro scherm --> A Story made by (Producing Name)
+
+YOU: ...
+
+GIRL 1 : ...
+JIJ KIEST WELKE KEUZE JE PAKT --> Goede keuze --> +1 FP
+                              --> Slechte keuze --> +0 FP
+
+Positieve; ...
+Negatieve; ...
+
+--> Daarna popt in een kadertje "NEW CHARACTER UNLOCKED" ( Met mss icon voor character )
+--> Eronder staat hoeveel FP je hebt en nodig hebt voor het maximum.
+
+
+DEMO - GAME
+
+DEMO WORDT MET 3 MEISJES ( NOG NIET GEKOZEN ) ReplaceName is 
+GIRL 1 ( 5 FP )
+GIRL 2 ( 10 FP )
+GIRL 3 ( 15 FP )
+
+Story; begint met jongen (YOU)
+
+Intro scherm --> A Story made by (Producing Name), Met een pad waarbij je bomen aan de zijkant ziet staan, bankjes en een vuilbak
+
+DIALOGUE 1 - GIRL 1
+YOU: What a lovely day!
+
+"YOU bump into another girl"
+
+GIRL 1 : Oh, watch where you're going!
+YOU --> I'm Sorry, I didn't see you there --> +1 FP
+YOU --> Watch where you are going! --> +0 FP
+
+Positieve; GIRL 1 - No problem, Where are you going? ( +1 FP PAD GEKOZEN ) --> Word nu pad 1 genoemd
+Negatieve; GIRL 1 - Ugh ~ All these boys ( +0 FP PAD GEKOZEN ) --> Word nu pad 2 genoemd
+
+pad 1: YOU --> I'm heading downtown want to come? ( +1 FP )
+           --> "Walk away" ( + 0 FP ) --> Zelfde uitkomst pad 2
+
+pad 2: "GIRL 1 Leaves" --> In Character GUI Zie je haar staan maar de naam is onbekend dus ???, EIND PAD 2
+
+pad 1 : GIRL 1 - Sure, My name is "REPLACERNAME", what about yours? --> Unlocked Naam van Character
+
+pad 1 : YOU --> My name is "CHOSENNAME", ... 
+
+pad 1 : GIRL 1 - So do you have a place in mind where we could go?
+
+pad 1 : YOU --> We could go to the movies? ( +1 FP )
+            --> We could go back to my place? ( +0 FP )
+
+
+pad 1 : GIRL 1 : --> Perfect, I love watching movies!
+        GIRL 1 : --> I just met you 5 minutes ago? --> Angry 
+--> Gekozen voor +0 FP PAD
+
+"Walking to the movies"
+
+pad 1 : GIRL 1 --> What movie would u like to watch?
+
+pad 1 : YOU --> I'd like to watch a romantic movie together. ( + 1 FP )
+            --> Pff, I'd rather go back home. ( +0 FP )
+
+pad 1 : GIRL 1  --> Okay, Lets go buy tickets.
+                --> "Leaves"
+
+pad 1 : YOU --> I'll buy both tickets so you don't have to. ( +1 FP )
+            --> I don't have any money with me right now. ( +0 FP )
+
+"YOU BOTH WALK TOGETHER INSIDE"
+
+END OF DEMO STORY 1 --> HEAD TO THE NEXT STORY
+
+
+
+
 
