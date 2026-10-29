@@ -1,3 +1,17 @@
 To-Do
 -------
-images veranderen in videos
+- images veranderen in videos
+
+- background maken voor goddess character (pilaren met in het midden een pool) oranje/goud voor belichting de background wordt de mainscene voor de character
+
+- voor zelfde background maar andere angles 
+
+Qwen Multiangle in ComfyUI
+This is an open-source node that takes a reference image and produces new views from different camera angles while keeping the subject, details, and background consistent. It uses the LoRA qwen-image-edit-2511-multiple-angles-lora.safetensors. The tutorial’s tip is to use the same seed for every angle and change only the camera angle between runs. Tutorial: https://www.earngenix.com/tutorials/qwen-multiangle-comfyui-workflow 
+
+
+
+Game Design:
+Story game met 1ste character goddess vermomd als een normaal persoon ook de scene (aarde) voor foto's te unlocken verschillende minigames (clicker, iets anders) dan verder story
+
+
