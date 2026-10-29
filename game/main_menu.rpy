@@ -16,6 +16,7 @@
 #   - A cherry-blossom tree fills the right side and drops petals that
 #     drift down the screen.
 #   - Twinkling sparkles around the title and a heart divider.
+#   - Hovering a word gives it a white outline (no hearts, no dark bars).
 #   - Fixed: the character art now floats up and down, and the rising
 #     bubbles now keep looping (the old animations stopped after one pass).
 #
@@ -53,95 +54,104 @@ init python:
     def mm_mix(a, b, t):
         return Color(a).interpolate(Color(b), t)
 
-    # ---- Cherry-blossom tree, drawn from rotated bars (branches) and soft dots ----
-    def mm_build_tree(base_x, base_y, seed=7):
+    # ---- Cherry-blossom tree, drawn from rotated bars (branches) and flower glyphs ----
+    def mm_build_tree(base_x, base_y, seed=3):
         rng = random.Random(seed)
-        branches = []
-        blossoms = []
+        bars = []
+        blossoms = []          # (x, y, radius, flower_count)
 
-        def grow(x, y, length, thick, ang, depth):
-            col = mm_mix("#6b2d4a", "#a85a7c", (4 - depth) / 4.0)
-            bar = Solid(col, xsize=max(int(thick), 2), ysize=int(length) + 2)
-            branches.append(Transform(bar, rotate=ang, transform_anchor=True,
-                                      anchor=(0.5, 1.0), rotate_pad=False,
-                                      xpos=int(x), ypos=int(y)))
-            ex = x + length * math.sin(math.radians(ang))
-            ey = y - length * math.cos(math.radians(ang))
+        def bar(x, y, length, thick, ang, depth):
+            col = mm_mix("#4f2038", "#a45a7a", (5 - depth) / 5.0)
+            b = Solid(col, xsize=max(int(thick), 2), ysize=int(length) + 3)
+            bars.append(Transform(b, rotate=ang, transform_anchor=True,
+                                anchor=(0.5, 1.0), rotate_pad=False,
+                                xpos=int(x), ypos=int(y)))
+            return (x + length * math.sin(math.radians(ang)),
+                    y - length * math.cos(math.radians(ang)))
+
+        def grow(x, y, length, thick, ang, depth, tip_r=70):
+            # every limb is two slightly bent pieces, so nothing looks stiff
+            x1, y1 = bar(x, y, length * 0.55, thick, ang + rng.uniform(-7, 7), depth)
+            ex, ey = bar(x1, y1, length * 0.50, thick * 0.86, ang + rng.uniform(-7, 7), depth)
             if depth == 0:
-                blossoms.append((ex, ey, 62))
-            else:
-                if depth <= 2:
-                    blossoms.append((ex, ey, 38))
-                for side in (-1, 1):
-                    grow(ex, ey,
-                         length * rng.uniform(0.70, 0.78),
-                         thick * 0.68,
-                         ang + side * rng.uniform(17, 31) + rng.uniform(-4, 4),
-                         depth - 1)
+                blossoms.append((ex, ey, tip_r, 6))
+                return
+            if depth <= 1:
+                blossoms.append((ex, ey, 40, 3))
+            # small side twig
+            if depth in (1, 2) and rng.random() < 0.35:
+                side = rng.choice((-1, 1))
+                grow(x1, y1, length * 0.40, thick * 0.55,
+                    ang + side * rng.uniform(42, 62), 0, 52)
+            kids = [(-1, rng.uniform(18, 32)), (1, rng.uniform(18, 32))]
+            if depth == 3 and rng.random() < 0.35:
+                kids.append((0, rng.uniform(-6, 6)))
+            for side, da in kids:
+                grow(ex, ey, length * rng.uniform(0.67, 0.74) * (0.85 if side == 0 else 1.0),
+                    thick * 0.68, ang + side * da + rng.uniform(-4, 4), depth - 1, tip_r)
 
-        grow(base_x, base_y, 270, 36, 2, 4)
+        # trunk: three pieces with a gentle S-bend
+        tx, ty = base_x, base_y
+        for (ln, th, an) in ((95, 46, -3), (88, 40, 4), (80, 35, -2)):
+            tx, ty = bar(tx, ty, ln, th, an, 5)
+        # main limbs
+        grow(tx, ty, 190, 28, -33 + rng.uniform(-4, 4), 4)
+        grow(tx, ty, 182, 28, 29 + rng.uniform(-4, 4), 4)
+        if rng.random() < 0.9:
+            grow(tx, ty, 140, 22, rng.uniform(-6, 6), 4)
 
-        puff_cols = ["#ffaac88c", "#ffc2d68c", "#ffb3cd8c", "#ffd9e6a0"]
-        flower_cols = ["#ffffff", "#ffe3ec", "#ff8fb5", "#ffffff"]
+        palette = ["#ffffff", "#ffe9f0", "#ffd0e0", "#ffc2d6", "#ffadc8", "#ff8fb5", "#ffffff", "#ffd9e6"]
+        puff_cols = ["#ffb3cd66", "#ffc9dc70", "#ffd9e680", "#ff9fc060"]
         puffs = []
         flowers = []
 
         def put(lst, text, size, col, cx, cy):
             lst.append(Transform(Text(text, size=size, color=col),
-                                 xanchor=0.5, yanchor=0.5,
-                                 xpos=int(cx), ypos=int(cy)))
+                                xanchor=0.5, yanchor=0.5,
+                                xpos=int(cx), ypos=int(cy)))
 
-        for (bx, by, r) in blossoms:
-            for k in range(5):
-                put(puffs, u"●", rng.choice([60, 76, 92]), rng.choice(puff_cols),
-                    bx + rng.uniform(-r, r) * 0.9, by + rng.uniform(-r, r) * 0.9)
-            for k in range(4):
-                put(flowers, rng.choice([u"✿", u"❀"]), rng.choice([22, 28, 34]),
-                    rng.choice(flower_cols),
-                    bx + rng.uniform(-r, r), by + rng.uniform(-r, r))
+        for (bx, by, r, n) in blossoms:
+            for k in range(1):
+                put(puffs, u"●", rng.choice([56, 70, 84]), rng.choice(puff_cols),
+                    bx + rng.gauss(0, r * 0.4), by + rng.gauss(0, r * 0.4))
+            for k in range(n):
+                put(flowers, rng.choice([u"✿", u"❀", u"✿"]), rng.choice([20, 26, 32, 38]),
+                    rng.choice(palette),
+                    bx + rng.gauss(0, r * 0.5), by + rng.gauss(0, r * 0.5))
 
-        kids = branches + puffs + flowers
-        return Fixed(*kids, xysize=(config.screen_width, config.screen_height))
+        # ground: soft shadow + fallen petals around the trunk
+        ground = []
+        ground.append(Transform(Text(u"●", size=420, color="#b5688a30"),
+                                xanchor=0.5, yanchor=0.5, xpos=int(base_x),
+                                ypos=int(config.screen_height - 12), xzoom=2.8, yzoom=0.2))
+        for k in range(30):
+            put(ground, rng.choice([u"✿", u"❀"]), rng.choice([16, 20, 24, 28]),
+                rng.choice(palette),
+                base_x + rng.gauss(0, 190), config.screen_height - rng.uniform(4, 58))
+
+        return Fixed(*(ground + bars + puffs + flowers),
+                    xysize=(config.screen_width, config.screen_height))
 
     # Falling petals: (x, x_end, y_start, delay, duration, spin, glyph, size, colour)
     mm_prng = random.Random(21)
     mm_petals = []
-    for mm_i in range(26):
-        px = mm_prng.uniform(0.58, 0.96)
+    for mm_i in range(36):
+        px = mm_prng.uniform(0.58, 0.97)
+        near = mm_prng.random() < 0.35          # bigger, faster petals "in front"
         mm_petals.append((
             px,
-            px + mm_prng.uniform(-0.14, 0.04),
-            mm_prng.uniform(0.24, 0.52),
+            px + mm_prng.uniform(-0.16, 0.04),
+            mm_prng.uniform(0.22, 0.52),
             mm_prng.uniform(0.0, 12.0),
-            mm_prng.uniform(9.0, 14.0),
+            mm_prng.uniform(7.0, 10.0) if near else mm_prng.uniform(10.0, 15.0),
             mm_prng.uniform(-420, 420),
             mm_prng.choice([u"✿", u"❀", u"●"]),
-            mm_prng.choice([18, 22, 26, 32]),
-            mm_prng.choice(["#ffffffcc", "#ffc2d6ee", "#ff9fbfdd", "#ffe3ecee"]),
+            mm_prng.choice([30, 36, 42]) if near else mm_prng.choice([16, 20, 24]),
+            mm_prng.choice(["#ffffffdd", "#ffc2d6ee", "#ff9fbfdd", "#ffe3ecee", "#ffadc8dd"]),
         ))
-
-    # Fixed random layout for the floating bubbles: (x, size, delay, duration, colour)
-    mm_rng = random.Random(11)
-    mm_bubbles = []
-    for mm_i in range(18):
-        mm_bubbles.append((
-            mm_rng.uniform(0.05, 0.97),
-            mm_rng.choice([26, 34, 46, 60, 80, 110]),
-            mm_rng.uniform(0.0, 14.0),
-            mm_rng.uniform(14.0, 26.0),
-            mm_rng.choice(["#ffffff55", "#ffffff44", "#ffe3ecaa", "#ffd0b855"]),
-        ))
-
-    # Sparkles around the title: (x, y, size, delay, duration)
-    mm_sparkles = [
-        (0.30, 0.13, 34, 0.0, 2.6),
-        (0.01, 0.30, 24, 1.1, 3.1),
-        (0.34, 0.33, 28, 0.6, 2.8),
-        (0.22, 0.04, 20, 1.7, 3.4),
-    ]
 
 define mm_bg = mm_vgradient("#fff3e8", "#f7a8c2")
-define mm_tree = mm_build_tree(0.735 * config.screen_width, config.screen_height + 10)
+define mm_tree = mm_build_tree(0.74 * config.screen_width, config.screen_height + 10)
 
 
 # ---------- Animations ----------
@@ -302,13 +312,15 @@ style mm_title:
     # first outline sits on top: white rim, then a soft pink glow/shadow underneath
     outlines [(4, "#ffffff", 0, 0), (10, "#c8567f55", 0, 6)]
 
+style mm_plain_button is empty
+
 style mm_btn_text:
     font mm_title_font
     size 46
     idle_color mm_color_dark
-    hover_color "#ffffff"
+    hover_color "#c8567f"
     outlines [(0, "#00000000", 0, 0)]
-    hover_outlines [(3, "#c8567f", 0, 2)]
+    hover_outlines [(5, "#ffffff", 0, 0)]
 
 style mm_heart:
     size 36
@@ -340,17 +352,14 @@ screen mm_button(label, act, idx):
         action act
         xsize 560
         ysize 86
+        style "mm_plain_button"
         at mm_btn(idx * 0.09)
         hover_sound None
 
-        hbox:
-            spacing 18
-            yalign 0.5
-            text "♥" style "mm_heart"
-            text label style "mm_btn_text" yalign 0.5
+        text label style "mm_btn_text" yalign 0.5
 
         # thin underline
-        add Solid("#ffffff88") xsize 500 ysize 2 yalign 1.0 xpos 54
+        add Solid("#ffffff88") xsize 500 ysize 2 yalign 1.0 xpos 8
 
 
 # ---------- Main menu ----------
@@ -369,8 +378,12 @@ screen main_menu():
     for (bx, bsize, bdelay, bdur, bcol) in mm_bubbles:
         text "●" size bsize color bcol at mm_float(bx, bdelay, bdur)
 
+    # soft light behind the canopy
+    text "●" size 700 color "#ffffff3a" at mm_glow(0.735, 0.34, 8.0)
+    text "●" size 420 color "#ffd9e644" at mm_glow(0.80, 0.30, 6.0)
+
     # cherry-blossom tree on the right, with petals drifting down
-    add mm_tree at mm_tree_sway(int(0.735 * config.screen_width), config.screen_height + 10)
+    add mm_tree at mm_tree_sway(int(0.74 * config.screen_width), config.screen_height + 10)
     for (ptx, ptx2, pty, ptdelay, ptdur, ptspin, ptglyph, ptsize, ptcol) in mm_petals:
         text ptglyph size ptsize color ptcol at mm_petal(ptx, ptx2, pty, ptdelay, ptdur, ptspin)
 

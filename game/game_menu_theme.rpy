@@ -43,12 +43,13 @@ style mm_nav_text:
     font mm_title_font
     size 38
     idle_color mm_color_dark
-    hover_color "#ffffff"
+    hover_color "#c8567f"
     selected_idle_color "#e0407f"
-    selected_hover_color "#ffffff"
+    selected_hover_color "#c8567f"
     outlines [(0, "#00000000", 0, 0)]
-    hover_outlines [(3, "#c8567f", 0, 2)]
-    selected_hover_outlines [(3, "#c8567f", 0, 2)]
+    hover_outlines [(5, "#ffffff", 0, 0)]
+    selected_idle_outlines [(3, "#ffffff", 0, 0)]
+    selected_hover_outlines [(5, "#ffffff", 0, 0)]
 
 style mm_content_frame is empty:
     xpos 450
@@ -86,14 +87,23 @@ style page_label_text:
     hover_color "#e0407f"
     outlines [(3, "#ffffffaa", 0, 1)]
 
+style page_button:
+    background None
+    hover_background None
+    selected_background None
+
 style page_button_text:
     font mm_title_font
     size 32
     idle_color mm_color_soft
-    hover_color "#e0407f"
+    hover_color "#c8567f"
     selected_idle_color "#e0407f"
-    selected_hover_color "#e0407f"
+    selected_hover_color "#c8567f"
     insensitive_color "#b5688a66"
+    outlines [(0, "#00000000", 0, 0)]
+    hover_outlines [(4, "#ffffff", 0, 0)]
+    selected_idle_outlines [(3, "#ffffff", 0, 0)]
+    selected_hover_outlines [(4, "#ffffff", 0, 0)]
 
 # --- preferences ---
 style mm_pref_label:
@@ -106,7 +116,7 @@ style mm_pref_label_text:
     color "#c8567f"
     outlines [(3, "#ffffffaa", 0, 1)]
 
-style mm_choice_button:
+style mm_choice_button is empty:
     ysize 56
     xminimum 300
 
@@ -116,18 +126,14 @@ style mm_choice_text:
     idle_color mm_color_dark
     hover_color "#c8567f"
     selected_idle_color "#e0407f"
-    selected_hover_color "#e0407f"
+    selected_hover_color "#c8567f"
+    outlines [(0, "#00000000", 0, 0)]
+    hover_outlines [(5, "#ffffff", 0, 0)]
+    selected_idle_outlines [(3, "#ffffff", 0, 0)]
+    selected_hover_outlines [(5, "#ffffff", 0, 0)]
     yalign 0.5
 
-style mm_choice_heart:
-    size 34
-    idle_color "#ffffffaa"
-    hover_color "#c8567f"
-    selected_idle_color "#e0407f"
-    selected_hover_color "#e0407f"
-    yalign 0.5
-
-style mm_small_button:
+style mm_small_button is empty:
     left_margin 20
     yalign 0.5
 
@@ -135,7 +141,9 @@ style mm_small_button_text:
     font mm_title_font
     size 30
     idle_color mm_color_soft
-    hover_color "#e0407f"
+    hover_color "#c8567f"
+    outlines [(0, "#00000000", 0, 0)]
+    hover_outlines [(4, "#ffffff", 0, 0)]
 
 style mm_slider:
     xsize 520
@@ -183,11 +191,20 @@ style help_text:
 style help_label_text:
     color "#c8567f"
 
+style help_button:
+    background None
+    hover_background None
+    selected_background None
+
 style help_button_text:
     idle_color mm_color_soft
-    hover_color "#e0407f"
+    hover_color "#c8567f"
     selected_idle_color "#e0407f"
-    selected_hover_color "#e0407f"
+    selected_hover_color "#c8567f"
+    outlines [(0, "#00000000", 0, 0)]
+    hover_outlines [(4, "#ffffff", 0, 0)]
+    selected_idle_outlines [(3, "#ffffff", 0, 0)]
+    selected_hover_outlines [(4, "#ffffff", 0, 0)]
 
 style history_text:
     color mm_color_dark
@@ -210,7 +227,7 @@ style mm_confirm_frame:
 style mm_confirm_prompt:
     xalign 0.5
 
-style mm_confirm_button:
+style mm_confirm_button is empty:
     xminimum 120
 
 style mm_confirm_prompt_text:
@@ -223,37 +240,31 @@ style mm_confirm_button_text:
     font mm_title_font
     size 46
     idle_color mm_color_dark
-    hover_color "#e0407f"
+    hover_color "#c8567f"
     outlines [(0, "#00000000", 0, 0)]
+    hover_outlines [(5, "#ffffff", 0, 0)]
 
 
-# ---------- One navigation button (heart + label) ----------
+# ---------- One navigation button (just the label) ----------
 screen mm_nav_button(label, act):
     button:
         action act
+        style "mm_plain_button"
         xsize 380
         ysize 72
         at mm_nav_btn
         hover_sound None
 
-        hbox:
-            spacing 14
-            yalign 0.5
-            text "♥" style "mm_heart"
-            text label style "mm_nav_text" yalign 0.5
+        text label style "mm_nav_text" yalign 0.5
 
 
-# ---------- Radio / check choice (heart lights up when selected) ----------
+# ---------- Radio / check choice (rose + white outline when selected) ----------
 screen mm_choice(lbl, act):
     button:
         action act
         style "mm_choice_button"
 
-        hbox:
-            spacing 14
-            yalign 0.5
-            text "♥" style "mm_choice_heart"
-            text lbl style "mm_choice_text"
+        text lbl style "mm_choice_text"
 
 
 # ---------- Navigation (left column of every menu page) ----------
