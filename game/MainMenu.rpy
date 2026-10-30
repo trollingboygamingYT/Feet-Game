@@ -18,12 +18,13 @@
 #  Main menu buttons: Start, Load, Characters, Shop, Settings, Quit.
 #  Hover = the word gets a white outline (no hearts, no dark bars).
 #  Unlock a character from your script with:  $ mm_unlock("char_1")
-#  Feet Points (FP): $ mm_add_fp(10)   (testing: Shift+O console -> mm_add_fp(500))
+#  Friendship Points (FP): $ mm_add_fp(10)   (testing: Shift+O console -> mm_add_fp(500))
 # ---------------------------------------------------------------
 
 init offset = 2
 
 # soft fades between menu pages and between menu <-> game
+define config.has_sync = False          # hides the "Download Sync / Upload Sync" button
 define config.intra_transition = Dissolve(0.25)
 define config.game_main_transition = Dissolve(0.5)
 define config.main_game_transition = Dissolve(0.5)
@@ -32,7 +33,7 @@ define config.main_game_transition = Dissolve(0.5)
 define mm_title_words = ["Sole", "Mates"]                # two lines of the title (change me!)
 define mm_tagline     = "A  S T O R Y  O F  S T E P S"   # small text above the title
 define mm_extras_in_game_menu = True                      # True = also list Characters/Shop in the Load/Settings page navigation
-define mm_start_fp      = 0                                 # Feet Points a brand-new player starts with
+define mm_start_fp      = 0                                 # Friendship Points a brand-new player starts with
 define mm_credit      = ""                               # e.g. "made with ♥ by Name & Name"
 define mm_title_size  = 130
 define mm_title_font  = gui.text_font                    # swap for a pretty .ttf, e.g. "fonts/Pacifico.ttf"
@@ -551,7 +552,7 @@ screen main_menu():
         if renpy.variant("pc") or renpy.variant("web"):
             use mm_button(_("Quit"), Quit(confirm=not main_menu), 5)
 
-    # Feet Points, top right (click it to open the Shop)
+    # Friendship Points, top right (click it to open the Shop)
     use mm_fp_hud
 
     # credit + version
@@ -600,7 +601,7 @@ define mm_lock = Fixed(
     Solid("#c9c9c9", xsize=10, ysize=22, xpos=30, ypos=46),
     xysize=(70, 86))
 
-# ---------- Feet Points (FP) + Shop data ----------
+# ---------- Friendship Points (FP) + Shop data ----------
 # FP is stored in `persistent`, so it is shared by every save.
 #   give FP in your script:   $ mm_add_fp(10)
 default persistent.mm_fp = mm_start_fp
@@ -637,7 +638,7 @@ init python:
         elif price is None:
             renpy.notify("Coming soon!")
         elif mm_fp() < price:
-            renpy.notify("Not enough Feet Points!")
+            renpy.notify("Not enough Friendship Points!")
         else:
             persistent.mm_fp = mm_fp() - price
             persistent.mm_owned = owned | set([item_id])
@@ -1356,7 +1357,7 @@ screen shop():
 
     use game_menu(_("Shop"), scroll="viewport"):
 
-        text _("Spend your Feet Points!") style "mm_section_text"
+        text _("Spend your Friendship Points!") style "mm_section_text"
 
         null height 16
 
@@ -1372,7 +1373,7 @@ screen shop():
                 null width 290 height 330
 
 
-# ---------- Feet Points badge (top right) ----------
+# ---------- Friendship Points badge (top right) ----------
 screen mm_fp_hud():
 
     button:
@@ -1395,5 +1396,5 @@ screen mm_fp_hud():
                 xpos 108
                 yalign 0.5
                 spacing -4
-                text _("FEET POINTS") style "mm_fp_caption"
+                text _("FRIENDSHIP POINTS") style "mm_fp_caption"
                 text str(mm_fp()) style "mm_fp_amount"
