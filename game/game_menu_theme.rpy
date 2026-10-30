@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------
-#  game_menu_theme.rpy  -  gives Load / Save / Preferences / About /
-#  Help / History / Confirm the same soft pink style as main_menu.rpy
+#  game_menu_theme.rpy  -  gives Load / Save / Settings / Characters /
+#  Shop / Help / History / Confirm the same soft pink style as main_menu.rpy
 #
 #  SETUP:
 #   1. Put this file in the game/ folder next to main_menu.rpy.
@@ -22,6 +22,61 @@ define mm_empty_slot = Fixed(
     Text(u"✿", size=80, color="#ffffffcc", xalign=0.5, yalign=0.5),
     xysize=(config.thumbnail_width, config.thumbnail_height))
 
+
+# ---------- Characters: data + unlocking ----------
+# One entry per character:  (id, name, image or None, short description)
+# Locked characters show as a gray card with a lock. Unlock one from your
+# script with:   $ mm_unlock("char_1")
+define mm_characters = [
+    ("char_1", "Character 1", None, "Add a description here."),
+    ("char_2", "Character 2", None, "Add a description here."),
+    ("char_3", "Character 3", None, "Add a description here."),
+    ("char_4", "Character 4", None, "Add a description here."),
+    ("char_5", "Character 5", None, "Add a description here."),
+    ("char_6", "Character 6", None, "Add a description here."),
+    ("char_7", "Character 7", None, "Add a description here."),
+    ("char_8", "Character 8", None, "Add a description here."),
+]
+
+default persistent.mm_unlocked = set()
+
+init python:
+    def mm_unlock(cid):
+        persistent.mm_unlocked = set(persistent.mm_unlocked or []) | set([cid])
+
+    def mm_is_unlocked(cid):
+        return cid in (persistent.mm_unlocked or [])
+
+# A simple padlock drawn from rectangles (no image needed)
+define mm_lock = Fixed(
+    Solid("#6d6d6d", xsize=10, ysize=36, xpos=14, ypos=0),
+    Solid("#6d6d6d", xsize=10, ysize=36, xpos=46, ypos=0),
+    Solid("#6d6d6d", xsize=42, ysize=10, xpos=14, ypos=0),
+    Solid("#575757", xsize=70, ysize=54, xpos=0, ypos=32),
+    Solid("#c9c9c9", xsize=10, ysize=22, xpos=30, ypos=46),
+    xysize=(70, 86))
+
+# ---------- Shop: placeholder items (name, price) ----------
+define mm_shop_items = [
+    ("Coming soon", "-"),
+    ("Coming soon", "-"),
+    ("Coming soon", "-"),
+    ("Coming soon", "-"),
+    ("Coming soon", "-"),
+    ("Coming soon", "-"),
+]
+
+transform mm_card_hover:
+    on hover:
+        ease 0.15 yoffset -8
+    on idle:
+        ease 0.2 yoffset 0
+
+style mm_card_name:
+    font mm_title_font
+    size 32
+    color "#ffffff"
+    outlines [(0, "#00000000", 0, 0)]
 
 # ---------- Animation for the navigation buttons ----------
 transform mm_nav_btn:
@@ -287,7 +342,11 @@ screen navigation():
 
         use mm_nav_button(_("Load"), ShowMenu("load"))
 
-        use mm_nav_button(_("Preferences"), ShowMenu("preferences"))
+        use mm_nav_button(_("Characters"), ShowMenu("characters"))
+
+        use mm_nav_button(_("Shop"), ShowMenu("shop"))
+
+        use mm_nav_button(_("Settings"), ShowMenu("preferences"))
 
         if _in_replay:
 
@@ -296,8 +355,6 @@ screen navigation():
         elif not main_menu:
 
             use mm_nav_button(_("Main Menu"), MainMenu())
-
-        use mm_nav_button(_("About"), ShowMenu("about"))
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
@@ -475,7 +532,7 @@ screen preferences():
 
     tag menu
 
-    use game_menu(_("Preferences"), scroll="viewport"):
+    use game_menu(_("Settings"), scroll="viewport"):
 
         vbox:
             spacing 30
@@ -571,3 +628,94 @@ screen confirm(message, yes_action, no_action):
 
                 textbutton _("Yes") action yes_action style "mm_confirm_button"
                 textbutton _("No") action no_action style "mm_confirm_button"
+
+
+# ---------- Characters (locked cards) ----------
+screen mm_char_card(cid, cname, cimg):
+
+    $ unlocked = mm_is_unlocked(cid)
+
+    button:
+        style "mm_plain_button"
+        xysize (290, 370)
+        at mm_card_hover
+
+        if unlocked:
+            action NullAction()
+        else:
+            action Notify(_("This character is still locked."))
+
+        fixed:
+            clipping True
+
+            if unlocked:
+
+                add Solid("#fff3f8")
+
+                if cimg:
+                    add cimg xalign 0.5 yalign 0.0
+                else:
+                    text "✿" size 140 color "#ffc2d6" xalign 0.5 ypos 70
+
+                add Solid("#c8567fdd") ysize 62 yalign 1.0
+                text cname style "mm_card_name" xalign 0.5 yalign 0.96
+
+            else:
+
+                add Solid("#8f8f8f")
+                add Solid("#b9b9b9") xpos 6 ypos 6 xsize 278 ysize 358
+
+                # gray silhouette
+                text "●" size 130 color "#a3a3a3" xalign 0.5 ypos 40
+                text "●" size 380 color "#a3a3a3" xalign 0.5 ypos 150
+
+                add mm_lock xalign 0.5 ypos 120
+
+                add Solid("#00000033") ysize 62 yalign 1.0
+                text _("Locked") style "mm_card_name" color "#6b6b6b" xalign 0.5 yalign 0.96
+
+
+screen characters():
+
+    tag menu
+
+    use game_menu(_("Characters"), scroll="viewport"):
+
+        hbox:
+            xsize 1370
+            spacing 30
+            box_wrap True
+            box_wrap_spacing 30
+
+            for (cid, cname, cimg, cdesc) in mm_characters:
+                use mm_char_card(cid, cname, cimg)
+
+
+# ---------- Shop (placeholder cards) ----------
+screen shop():
+
+    tag menu
+
+    use game_menu(_("Shop"), scroll="viewport"):
+
+        hbox:
+            xsize 1370
+            spacing 30
+            box_wrap True
+            box_wrap_spacing 30
+
+            for (iname, iprice) in mm_shop_items:
+
+                button:
+                    style "mm_plain_button"
+                    xysize (290, 330)
+                    at mm_card_hover
+                    action Notify(_("Coming soon!"))
+
+                    fixed:
+                        clipping True
+                        add Solid("#ffffff66")
+                        text "✿" size 120 color "#ffffffdd" xalign 0.5 ypos 50
+                        add Solid("#c8567fdd") ysize 62 yalign 1.0
+                        text iname style "mm_card_name" xalign 0.5 yalign 0.96
+                        text iprice style "mm_card_name" color "#6b2d4a" xalign 0.5 ypos 215
