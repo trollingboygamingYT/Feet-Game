@@ -1,9 +1,13 @@
 ﻿
-define e = Character("Eileen")
-define a = Character("Test")
-define b = Character("Martinos")
+define y = Character("YOU")
+define a = Character("Adrastea")
+
 
 # The game starts here.
+
+
+
+
 
 label start:
 
@@ -17,14 +21,36 @@ label start:
     # replace it by adding a file named "eileen happy.png" to the images
     # directory.
 
-    show eileen happy
+    show YOU
 
     # These display lines of dialogue.
 
-    e "You've created a new Ren'Py game."
+    y "What a lovely day!"
 
-    e "Once you add a story, pictures, and music, you can release it to the world!"
+    y "YOU bump into another girl"
 
-    # This ends the game.
+    show Adrastea
 
-    return
+    a "Oh, watch where you're going!"
+
+    show YOU
+
+menu:
+    y "What should i reply?"
+    "I'm sorry, I didn't see you there":
+        $ mm_add_fp(1)
+        "You received +1 Friendship Point!"
+
+        a "That's alright, Where are you heading off to?"
+        
+
+    
+    "Hey, never touch me again!":
+        "You made her angry,You didn't receive any Friendship Point!"
+
+        a "Wow, there's no need to be so aggresive!"
+    
+y "Well, i'm actually going downtown, wanna come?"
+
+
+   

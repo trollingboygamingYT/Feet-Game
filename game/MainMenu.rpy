@@ -18,7 +18,7 @@
 #  Main menu buttons: Start, Load, Characters, Shop, Settings, Quit.
 #  Hover = the word gets a white outline (no hearts, no dark bars).
 #  Unlock a character from your script with:  $ mm_unlock("char_1")
-#  Friendship Points (FP): $ mm_add_fp(10)   (testing: Shift+O console -> mm_add_fp(500))
+#  Feet Points (FP): $ mm_add_fp(10)   (testing: Shift+O console -> mm_add_fp(500))
 # ---------------------------------------------------------------
 
 init offset = 2
@@ -33,7 +33,7 @@ define config.main_game_transition = Dissolve(0.5)
 define mm_title_words = ["Sole", "Mates"]                # two lines of the title (change me!)
 define mm_tagline     = "A  S T O R Y  O F  S T E P S"   # small text above the title
 define mm_extras_in_game_menu = True                      # True = also list Characters/Shop in the Load/Settings page navigation
-define mm_start_fp      = 0                                 # Friendship Points a brand-new player starts with
+define mm_start_fp      = 0                                 # Feet Points a brand-new player starts with
 define mm_credit      = ""                               # e.g. "made with ♥ by Name & Name"
 define mm_title_size  = 130
 define mm_title_font  = gui.text_font                    # swap for a pretty .ttf, e.g. "fonts/Pacifico.ttf"
@@ -243,9 +243,9 @@ define mm_hill_far = Transform(Text(u"●", size=1000, color="#f7b3c8"), xanchor
 define mm_hill_near = Transform(Text(u"●", size=800, color="#f19bb8"), xanchor=0.5, yanchor=0.5,
                                 xpos=int(0.86 * config.screen_width), ypos=config.screen_height + 50,
                                 xzoom=2.0, yzoom=0.5)
-define mm_fp_icon = mm_heart_icon(34, label="FP")
-define mm_fp_icon_small = mm_heart_icon(11)
-define mm_tree = mm_build_tree(0.74 * config.screen_width, config.screen_height + 10)
+define Fp_icon = mm_heart_icon(34, label="FP")
+define Fp_icon_small = mm_heart_icon(11)
+define Fp_tree = mm_build_tree(0.74 * config.screen_width, config.screen_height + 10)
 
 
 # ---------- Animations ----------
@@ -552,8 +552,8 @@ screen main_menu():
         if renpy.variant("pc") or renpy.variant("web"):
             use mm_button(_("Quit"), Quit(confirm=not main_menu), 5)
 
-    # Friendship Points, top right (click it to open the Shop)
-    use mm_fp_hud
+    # Feet Points, top right (click it to open the Shop)
+    use Fp_hud
 
     # credit + version
     if mm_credit:
@@ -601,10 +601,10 @@ define mm_lock = Fixed(
     Solid("#c9c9c9", xsize=10, ysize=22, xpos=30, ypos=46),
     xysize=(70, 86))
 
-# ---------- Friendship Points (FP) + Shop data ----------
+# ---------- Feet Points (FP) + Shop data ----------
 # FP is stored in `persistent`, so it is shared by every save.
 #   give FP in your script:   $ mm_add_fp(10)
-default persistent.mm_fp = mm_start_fp
+default persistent.Fp = mm_start_fp
 default persistent.mm_owned = set()
 
 # One entry per shop item:  (id, name, price or None, character it unlocks or None)
@@ -622,11 +622,11 @@ define mm_shop_items = [
 ]
 
 init python:
-    def mm_fp():
-        return persistent.mm_fp or 0
+    def Fp():
+        return persistent.Fp or 0
 
     def mm_add_fp(n):
-        persistent.mm_fp = (persistent.mm_fp or 0) + n
+        persistent.Fp = (persistent.Fp or 0) + n
 
     def mm_unlocked_count():
         return len([c for c in mm_characters if mm_is_unlocked(c[0])])
@@ -637,10 +637,10 @@ init python:
             renpy.notify("You already own " + name + "!")
         elif price is None:
             renpy.notify("Coming soon!")
-        elif mm_fp() < price:
-            renpy.notify("Not enough Friendship Points!")
+        elif Fp() < price:
+            renpy.notify("Not enough Feet Points!")
         else:
-            persistent.mm_fp = mm_fp() - price
+            persistent.Fp = Fp() - price
             persistent.mm_owned = owned | set([item_id])
             if unlock:
                 mm_unlock(unlock)
@@ -652,13 +652,13 @@ transform mm_card_hover:
     on idle:
         ease 0.2 yoffset 0
 
-style mm_fp_caption:
+style Fp_caption:
     font mm_title_font
     size 16
     color mm_color_soft
     kerning 2
 
-style mm_fp_amount:
+style Fp_amount:
     font mm_title_font
     size 46
     bold True
@@ -1042,7 +1042,7 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
     text title style "mm_gm_title" xpos 60 ypos 30
 
-    use mm_fp_hud
+    use Fp_hud
 
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
@@ -1051,7 +1051,7 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 # ---------- Save / Load slots ----------
 screen file_slots(title):
 
-    default page_name_value = FilePageNameInputValue(pattern=_("Page {}"), auto=_("Automatic saves"), quick=_("Quick saves"))
+    default page_name_value = FilePageNameInputValue(pattern=_("Page {}"), auto=_("Automatic saves"))
 
     use game_menu(title):
 
@@ -1347,7 +1347,7 @@ screen mm_shop_card(iid, iname, price, unlock):
                     ypos 14
                     hbox:
                         spacing 8
-                        add mm_fp_icon_small yalign 0.5
+                        add Fp_icon_small yalign 0.5
                         text str(price) style "mm_pill_text"
 
 
@@ -1357,7 +1357,7 @@ screen shop():
 
     use game_menu(_("Shop"), scroll="viewport"):
 
-        text _("Spend your Friendship Points!") style "mm_section_text"
+        text _("Spend your Feet Points!") style "mm_section_text"
 
         null height 16
 
@@ -1373,8 +1373,8 @@ screen shop():
                 null width 290 height 330
 
 
-# ---------- Friendship Points badge (top right) ----------
-screen mm_fp_hud():
+# ----------- Feet Points badge (top right) ----------
+screen Fp_hud():
 
     button:
         style "mm_plain_button"
@@ -1390,11 +1390,11 @@ screen mm_fp_hud():
             add Solid("#fff0f6") xpos 3 ypos 3 xsize 334 ysize 86
             add Solid("#e0407f") xpos 3 ypos 3 xsize 8 ysize 86
 
-            add mm_fp_icon xpos 26 yalign 0.5
+            add Fp_icon xpos 26 yalign 0.5
 
             vbox:
                 xpos 108
                 yalign 0.5
                 spacing -4
-                text _("FRIENDSHIP POINTS") style "mm_fp_caption"
-                text str(mm_fp()) style "mm_fp_amount"
+                text _("FEET POINTS") style "Fp_caption"
+                text str(Fp()) style "Fp_amount"

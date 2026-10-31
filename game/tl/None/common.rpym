@@ -341,9 +341,6 @@ translate None strings:
     old "Automatic saves"
     new "Automatic saves"
 
-    # renpy/common/00action_file.rpy:675
-    old "Quick saves"
-    new "Quick saves"
 
     # renpy/common/00action_file.rpy:816
     old "Next file page."
