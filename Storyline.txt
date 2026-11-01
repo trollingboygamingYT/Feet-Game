@@ -56,55 +56,78 @@ GIRL 1 ( 5 FP )
 GIRL 2 ( 10 FP )
 GIRL 3 ( 15 FP )
 
+
+
+Alle poses: Rug naar jou, Oog in oog (recht voor jou), Boos gezicht naar jou,
+
+
+
+
+Alle bg: park, Cinema binnen en buiten,
+
+
+
+
 Story; begint met jongen (YOU)
 
 Intro scherm --> A Story made by (Producing Name), Met een pad waarbij je bomen aan de zijkant ziet staan, bankjes en een vuilbak
 
-DIALOGUE 1 - GIRL 1
+DIALOGUE 1 - ADRASTEA * Park
 YOU: What a lovely day!
 
-"YOU bump into another girl"
+"YOU bump into a girl"
 
-GIRL 1 : Oh, watch where you're going!
+Adrastea : Oh, watch where you're going!
 YOU --> I'm Sorry, I didn't see you there --> +1 FP
 YOU --> Watch where you are going! --> +0 FP
 
-Positieve; GIRL 1 - No problem, Where are you going? ( +1 FP PAD GEKOZEN ) --> Word nu pad 1 genoemd
-Negatieve; GIRL 1 - Ugh ~ All these boys ( +0 FP PAD GEKOZEN ) --> Word nu pad 2 genoemd
+Positieve; ADRASTEA - No problem, Where are you going? ( +1 FP PAD GEKOZEN )
+Negatieve; GIRL 1 - Ugh ~ All these boys ( +0 FP PAD GEKOZEN )
 
-pad 1: YOU --> I'm heading downtown want to come? ( +1 FP )
-           --> "Walk away" ( + 0 FP ) --> Zelfde uitkomst pad 2
+pad 1: YOU --> I'm heading downtown want to come?
+          
 
-pad 2: "GIRL 1 Leaves" --> In Character GUI Zie je haar staan maar de naam is onbekend dus ???, EIND PAD 2
+pad 1 : ADRASTEA - Sure, My name is "REPLACERNAME" ( YOU CAN CHOOSE HERE YOUR NAME ), what about yours? --> Unlocked Naam van Character
 
-pad 1 : GIRL 1 - Sure, My name is "REPLACERNAME", what about yours? --> Unlocked Naam van Character
+pad 1 : YOU --> My name is "CHOSENNAME", It's nice to meet you
 
-pad 1 : YOU --> My name is "CHOSENNAME", ... 
-
-pad 1 : GIRL 1 - So do you have a place in mind where we could go?
+pad 1 : ADRASTEA - So do you have a place in mind where we could go?
 
 pad 1 : YOU --> We could go to the movies? ( +1 FP )
             --> We could go back to my place? ( +0 FP )
 
+pad 1 : ADRASTEA : --> Perfect, I love watching movies!
+        ADRASTEA : --> I just met you 5 minutes ago?! --> Angry 
 
-pad 1 : GIRL 1 : --> Perfect, I love watching movies!
-        GIRL 1 : --> I just met you 5 minutes ago? --> Angry 
---> Gekozen voor +0 FP PAD
 
-"Walking to the movies"
+"Walking to the movies" *Cinema buiten
 
-pad 1 : GIRL 1 --> What movie would u like to watch?
+pad 1 : ADRASTEA --> What movie would u like to watch?
 
 pad 1 : YOU --> I'd like to watch a romantic movie together. ( + 1 FP )
             --> Pff, I'd rather go back home. ( +0 FP )
 
-pad 1 : GIRL 1  --> Okay, Lets go buy tickets.
-                --> "Leaves"
+pad 1 : ADRASTEA  --> Okay, Lets just go buy tickets first.
+                
 
 pad 1 : YOU --> I'll buy both tickets so you don't have to. ( +1 FP )
             --> I don't have any money with me right now. ( +0 FP )
 
-"YOU BOTH WALK TOGETHER INSIDE"
+pad 1 : ADRASTEA --> Thank you so much!
+                 --> Who doesn't bring money with him, i'll just pay then?
+
+"YOU BOTH WALK TOGETHER INSIDE" * Cinema binnen
+
+pad 1 : YOU --> 
+
+
+
+
+
+
+
+
+
 
 END OF DEMO STORY 1 --> HEAD TO THE NEXT STORY
 
