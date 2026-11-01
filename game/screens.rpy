@@ -97,17 +97,74 @@ style frame:
 
 screen say(who, what):
 
-    window:
-        id "window"
+    # Paper background with the pink flower included.
+    add "gui/dialogue_paper.png":
+        xalign 0.5
+        yalign 1.0
+        xysize (config.screen_width * 0.80, 350)
 
-        if who is not None:
+    # Character name.
+    if who is not None:
+        text who:
+            id "who"
+            font "fonts/PatrickHand-Regular.ttf"
+            size 34
+            color "#2878C8"
+            bold False
+            xpos 0.055
+            ypos config.screen_height - 260
 
-            window:
-                id "namebox"
-                style "namebox"
-                text who id "who"
+    # Dialogue.
+    text what:
+        id "what"
+        font "fonts/PatrickHand-Regular.ttf"
+        size 30
+        color "#594632"
+        xpos 0.07
+        ypos config.screen_height - 190
+        xmaximum config.screen_width * 0.70
+        line_spacing 5
 
-        text what id "what"
+    
+
+transform fp_float_up:
+
+    alpha 0.0
+    yoffset 20
+    zoom 0.85
+
+    easein 0.2:
+        alpha 1.0
+        yoffset 0
+        zoom 1.0
+
+    pause 0.3
+
+    easeout 0.9:
+        alpha 0.0
+        yoffset -75
+        zoom 1.15
+
+
+screen fp_popup(amount=1):
+
+    zorder 300
+
+    text ("+%s FP" % amount if amount > 0 else "%s FP" % amount):
+
+        xpos 0.72
+        ypos 0.38
+
+        size 38
+        bold True
+
+        color ("#55DFA0" if amount > 0 else "#FF7777")
+
+        outlines [(3, "#263044", 0, 0)]
+
+        at fp_float_up
+
+    timer 1.4 action Hide("fp_popup")
 
 
     ## If there's a side image, display it above the text. Do not display on the

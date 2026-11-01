@@ -39,6 +39,7 @@ menu:
     y "What should i reply?"
     "I'm sorry, I didn't see you there":
         $ mm_add_fp(1)
+        show screen fp_popup(1)
         "You received +1 Friendship Point!"
 
         a "That's alright, Where are you heading off to?"
