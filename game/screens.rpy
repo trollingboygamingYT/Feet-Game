@@ -97,35 +97,57 @@ style frame:
 
 screen say(who, what):
 
-    # Paper background with the pink flower included.
-    add "gui/dialogue_paper.png":
+    # ---------- TWEAK THESE ----------
+    $ paper_width_pct = 0.80
+    $ paper_yoffset   = 80
+    $ paper_alpha     = 0.85
+
+    # Name (only shown when a character speaks)
+    $ name_left_pct   = 0.06
+    $ name_top_pct    = 0.30
+    $ name_size       = 44
+
+    # Dialogue
+    $ text_left_pct   = 0.06
+    $ text_right_pct  = 0.12
+    $ text_top_pct    = 0.48   # used when a name is shown
+    $ text_top_noname = 0.36   # used for narration/actions (no name)
+    $ text_size       = 40
+    # ---------------------------------
+
+    $ img_w, img_h = renpy.image_size("gui/dialogue_paper.png")
+    $ paper_w = int(config.screen_width * paper_width_pct)
+    $ paper_h = int(paper_w * img_h / float(img_w))
+    $ current_top = text_top_pct if who else text_top_noname
+
+    fixed:
         xalign 0.5
         yalign 1.0
-        xysize (config.screen_width * 0.80, 350)
+        yoffset paper_yoffset
+        xysize (paper_w, paper_h)
 
-    # Character name.
-    if who is not None:
-        text who:
-            id "who"
+        add "gui/dialogue_paper.png":
+            xysize (paper_w, paper_h)
+            alpha paper_alpha
+
+        if who:
+            text who:
+                id "who"
+                font "fonts/PatrickHand-Regular.ttf"
+                size name_size
+                color "#2878C8"
+                xpos int(paper_w * name_left_pct)
+                ypos int(paper_h * name_top_pct)
+
+        text what:
+            id "what"
             font "fonts/PatrickHand-Regular.ttf"
-            size 34
-            color "#2878C8"
-            bold False
-            xpos 0.055
-            ypos config.screen_height - 260
-
-    # Dialogue.
-    text what:
-        id "what"
-        font "fonts/PatrickHand-Regular.ttf"
-        size 30
-        color "#594632"
-        xpos 0.07
-        ypos config.screen_height - 190
-        xmaximum config.screen_width * 0.70
-        line_spacing 5
-
-    
+            size text_size
+            color "#594632"
+            line_spacing 6
+            xpos int(paper_w * text_left_pct)
+            ypos int(paper_h * current_top)
+            xsize int(paper_w * (1.0 - text_left_pct - text_right_pct))
 
 transform fp_float_up:
 
@@ -280,6 +302,11 @@ style choice_vbox:
 
     spacing gui.choice_spacing
 
+
+screen quick_menu():
+    zorder 100
+
+
 style choice_button is default:
     properties gui.button_properties("choice_button")
 
@@ -292,33 +319,12 @@ style choice_button_text is default:
 ## The quick menu is displayed in-game to provide easy access to the out-of-game
 ## menus.
 
-screen quick_menu():
-
-    ## Ensure this appears on top of other screens.
-    zorder 100
-
-    if quick_menu:
-
-        hbox:
-            style_prefix "quick"
-            style "quick_menu"
-
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Save") action ShowMenu('save')
-            textbutton _("Q.Save") action QuickSave()
-            textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
-
-
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
 ## the player has not explicitly hidden the interface.
 init python:
     config.overlay_screens.append("quick_menu")
 
-default quick_menu = True
+default quick_menu = False
 
 style quick_menu is hbox
 style quick_button is default

@@ -1,5 +1,4 @@
-﻿
-define y = Character("YOU")
+﻿define y = Character("YOU")
 define a = Character("Adrastea")
 
 
@@ -27,7 +26,7 @@ label start:
 
     y "What a lovely day!"
 
-    y "YOU bump into another girl"
+    "YOU bump into another girl"
 
     show Adrastea
 

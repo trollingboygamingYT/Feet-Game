@@ -2,6 +2,8 @@ To-Do
 -------
 - images veranderen in videos
 
+- quick menu als GUI veranderen (ESC)
+
 - background maken voor goddess character (pilaren met in het midden een pool) oranje/goud voor belichting de background wordt de mainscene voor de character
 
 - voor zelfde background maar andere angles 
