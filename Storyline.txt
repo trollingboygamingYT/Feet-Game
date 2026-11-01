@@ -72,12 +72,12 @@ Story; begint met jongen (YOU)
 
 Intro scherm --> A Story made by (Producing Name), Met een pad waarbij je bomen aan de zijkant ziet staan, bankjes en een vuilbak
 
-DIALOGUE 1 - ADRASTEA * Park
+DIALOGUE 1 - ADRASTEA * Park Adrastea is er nog niet bg (Park_without_Adrastea.png)
 YOU: What a lovely day!
 
 "YOU bump into a girl"
 
-Adrastea : Oh, watch where you're going!
+Adrastea : Oh, watch where you're going! bg (Park_With_Adrastea.png) bg met foto (Adrastea1.png) opplakken
 YOU --> I'm Sorry, I didn't see you there --> +1 FP
 YOU --> Watch where you are going! --> +0 FP
 
