@@ -245,7 +245,7 @@ define mm_hill_near = Transform(Text(u"●", size=800, color="#f19bb8"), xanchor
                                 xzoom=2.0, yzoom=0.5)
 define Fp_icon = mm_heart_icon(34, label="FP")
 define Fp_icon_small = mm_heart_icon(11)
-define Fp_tree = mm_build_tree(0.74 * config.screen_width, config.screen_height + 10)
+define mm_tree = mm_build_tree(0.74 * config.screen_width, config.screen_height + 10)
 
 
 # ---------- Animations ----------
