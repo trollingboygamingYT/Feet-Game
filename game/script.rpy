@@ -1,5 +1,5 @@
-﻿define y = Character("YOU")
-define a = Character("ADRASTEA")
+﻿define y = Character("YOU", color="#6b2d4a")
+define a = Character("ADRASTEA", color="#e0407f")
 
 # | Backgrounds | #
 image bg_Park_W_Ao = "images/Adrastea/Scenes/Park_without_Adrastea.png"
@@ -28,36 +28,62 @@ transform center_grounded:
     yoffset 40
     matrixcolor TintMatrix("#fff5e6") * BrightnessMatrix(-0.05) * ContrastMatrix(0.95)
 
+# Her entrance: slides in a little from the side
+transform adrastea_enter:
+    left_side
+    alpha 0.0
+    xoffset -60
+    parallel:
+        ease 0.4 alpha 1.0
+    parallel:
+        easeout 0.4 xoffset 0
+
+# Remember how the first meeting went (use later in the story!)
+default adrastea_first_impression = "neutral"
+
+
 # The game starts here.
 label start:
 
-    scene bg_Park_W_Ao
+    scene bg_Park_W_Ao with fade
+
+    "The sun is out, the park is quiet, and you've got nowhere to be until later."
 
     y "What a lovely day!"
 
-    "YOU bump into a girl"
-    "*THUD*" with vpunch # Changed to vpunch so it doesn't reveal the side edges of the screen
+    "You close your eyes for a second, smiling up at the sky and not looking where you're walking..."
 
-    # Show her with the updated lighting and position
-    show Adrastea_Park_Annoyed at left_side
+    # --- The bump ---
+    "*THUD*" with vpunch
+
+    "You stumble backwards, heart racing."
+
+    show Adrastea_Park_Annoyed at adrastea_enter with dissolve
+
+    "You bumped into a girl!"
 
     a "Oh, watch where you're going!"
-    
+
     menu:
         y "What should I reply?"
-        
-        "I'm sorry, I didn't see you there":
-            # Assuming mm_add_fp and fp_popup are defined in your variables/screens files
+
+        "I'm so sorry, I didn't see you there!":
+            $ adrastea_first_impression = "good"
             $ mm_add_fp(1)
             show screen fp_popup(1)
-            "You received +1 Friendship Point!"
 
-            a "That's alright, where are you heading off to?"
-            y "Well, I'm actually going downtown, wanna come?"
-            
+            a "...That's alright. Just be more careful next time."
+            a "Where are you heading off to, anyway?"
+
         "Hey, never touch me again!":
-            "You made her angry. You didn't receive any Friendship Points!"
+            $ adrastea_first_impression = "bad"
+
+            "You made her angry. No Feet Points this time."
 
             a "Wow, there's no need to be so aggressive!"
-            y "Sorry, I'm not in the mood right now."
-            y "Well, I'm actually going downtown, wanna come?"
+            y "Sorry... I'm just not in the mood right now."
+
+    y "Well, I'm actually going downtown. Wanna come?"
+
+    # Continue your story from here
+    return
