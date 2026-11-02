@@ -30,6 +30,15 @@ init python:
         persistent.mm_owned = set()
         renpy.notify("Wiped all persistent data!")
 
+    def mod_do_rollback():
+        try:
+            n = int(store.mod_rollback_amount)
+        except (ValueError, TypeError):
+            n = 1
+        n = max(1, min(n, 100))   # keep it between 1 and 100
+        renpy.hide_screen("mod_menu")
+        renpy.rollback(checkpoints=n, force=True, greedy=True)
+
 
 screen mod_menu():
     modal True
@@ -74,7 +83,15 @@ screen mod_menu():
 
                 text _("Rewind:") size 20 color "#aaaaaa" yalign 0.5
 
-                textbutton _("⏪ Go Back 1 Line") action [Hide("mod_menu"), Rollback()] text_color "#ffffff" text_hover_color "#ff88bb" yalign 0.5
+                frame:
+                    background Solid("#444444")
+                    padding (10, 4)
+                    xsize 80
+                    input value VariableInputValue("mod_rollback_amount") length 3 allow "0123456789" color "#ffffff" size 20
+
+                text _("lines") size 20 color "#aaaaaa" yalign 0.5
+
+                textbutton _("⏪ Rewind") action Function(mod_do_rollback) text_color "#ffffff" text_hover_color "#ff88bb" yalign 0.5
 
             null height 20
             textbutton _("⚠ WIPE ALL DATA (Reset Game)") action Function(mod_wipe_all) text_color "#ff0000" xalign 0.5
