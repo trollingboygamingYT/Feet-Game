@@ -180,7 +180,7 @@ screen fp_popup(amount=1):
         size 38
         bold True
 
-        color ("#55DFA0" if amount > 0 else "#FF7777")
+        color ("#ff74ea" if amount > 0 else "#FF7777")
 
         outlines [(3, "#263044", 0, 0)]
 

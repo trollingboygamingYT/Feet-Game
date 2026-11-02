@@ -1,5 +1,6 @@
 ﻿define y = Character("YOU")
-define a = Character("Adrastea")
+define a = Character("ADRASTEA")
+image bg_Park_W_A = "scenes/Park_without_Adrastea.png"
 
 
 # The game starts here.
@@ -14,7 +15,7 @@ label start:
     # add a file (named either "bg room.png" or "bg room.jpg") to the
     # images directory to show it.
 
-    scene bg room
+    scene bg_Park_W_A
 
     # This shows a character sprite. A placeholder is used, but you can
     # replace it by adding a file named "eileen happy.png" to the images
@@ -28,7 +29,7 @@ label start:
 
     "YOU bump into another girl"
 
-    show Adrastea
+    show ADRASTEA
 
     a "Oh, watch where you're going!"
 
@@ -49,6 +50,7 @@ menu:
         "You made her angry,You didn't receive any Friendship Point!"
 
         a "Wow, there's no need to be so aggresive!"
+        y "Sorry, I'm not in the mood right now"
     
 y "Well, i'm actually going downtown, wanna come?"
 
