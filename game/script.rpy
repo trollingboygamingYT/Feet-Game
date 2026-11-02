@@ -66,12 +66,12 @@ label start:
 
         "I'm so sorry, I didn't see you there!":
             
-            # 1. Show Feet Points and WAIT for it to finish
+            # 1. Show Feet Points and WAIT for it to finish (clicks are blocked)
             $ mm_add_fp(1)
             show screen fp_popup(1)
             pause 2.8
             
-            # 2. Check if she was already unlocked. If not, unlock her and show popup!
+            # 2. After the wait, check if locked. If so, unlock and wait again.
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
@@ -82,7 +82,7 @@ label start:
 
         "Hey, never touch me again!":
             
-            # 1. Check if she was already unlocked. If not, unlock her and show popup!
+            # 1. Check if locked. If so, unlock and wait.
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
@@ -94,7 +94,5 @@ label start:
             y "Sorry... I'm just not in the mood right now."
 
     y "Well, I'm actually going downtown. Wanna come?"
-
-    return
 
     return

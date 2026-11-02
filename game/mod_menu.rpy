@@ -1,8 +1,8 @@
 default mod_rollback_amount = "1"
+default mod_rollback_remaining = 0
 
 init python:
     config.keymap['mod_menu'] = ['K_F2']
-
 
     def mod_add_fp(n):
         persistent.Fp = (persistent.Fp or 0) + n
@@ -30,6 +30,7 @@ init python:
         persistent.mm_owned = set()
         renpy.notify("Wiped all persistent data!")
 
+
 screen mod_menu():
     modal True
     zorder 1000
@@ -46,20 +47,20 @@ screen mod_menu():
         vbox:
             spacing 20
             text _("MOD MENU") size 40 bold True color "#ff4444" xalign 0.5
-            
+
             text _("Feet Points: [persistent.Fp]") size 24 color "#ffffff" bold True
             hbox:
                 spacing 15
-                textbutton _("+10 FP") action Function(mod_add_fp, 10) text_color "#ffffff" text_hover_color "#ff88bb"
-                textbutton _("+100 FP") action Function(mod_add_fp, 100) text_color "#ffffff" text_hover_color "#ff88bb"
-                textbutton _("-10 FP") action Function(mod_add_fp, -10) text_color "#ffffff" text_hover_color "#ff88bb"
-                textbutton _("Set to 0") action Function(mod_set_fp, 0) text_color "#ffffff" text_hover_color "#ff88bb"
+                textbutton _("+10 FP")   action Function(mod_add_fp, 10)  text_color "#ffffff" text_hover_color "#ff88bb"
+                textbutton _("+100 FP")  action Function(mod_add_fp, 100) text_color "#ffffff" text_hover_color "#ff88bb"
+                textbutton _("-10 FP")   action Function(mod_add_fp, -10) text_color "#ffffff" text_hover_color "#ff88bb"
+                textbutton _("Set to 0") action Function(mod_set_fp, 0)   text_color "#ffffff" text_hover_color "#ff88bb"
 
             text _("Characters:") size 24 color "#ffffff" bold True
             hbox:
                 spacing 15
                 textbutton _("Unlock All") action Function(mod_unlock_all) text_color "#ffffff" text_hover_color "#88ffbb"
-                textbutton _("Lock All") action Function(mod_lock_all) text_color "#ffffff" text_hover_color "#ff8888"
+                textbutton _("Lock All")   action Function(mod_lock_all)   text_color "#ffffff" text_hover_color "#ff8888"
 
             text _("Shop:") size 24 color "#ffffff" bold True
             hbox:
@@ -70,26 +71,16 @@ screen mod_menu():
             hbox:
                 spacing 15
                 yalign 0.5
-                
-                text _("Rewind lines:") size 20 color "#aaaaaa" yalign 0.5
-                
-                # The input box
-                frame:
-                    background Solid("#444444")
-                    padding (10, 5)
-                    input:
-                        value VariableInputValue("mod_rollback_amount")
-                        length 3
-                        color "#ffffff"
-                        
-                # The button that triggers the rewind
-                textbutton _("⏪ Go Back") action [Hide("mod_menu"), Rollback(int(mod_rollback_amount) if mod_rollback_amount.isdigit() else 1)] text_color "#ffffff" text_hover_color "#ff88bb"
+
+                text _("Rewind:") size 20 color "#aaaaaa" yalign 0.5
+
+                textbutton _("⏪ Go Back 1 Line") action [Hide("mod_menu"), Rollback()] text_color "#ffffff" text_hover_color "#ff88bb" yalign 0.5
 
             null height 20
             textbutton _("⚠ WIPE ALL DATA (Reset Game)") action Function(mod_wipe_all) text_color "#ff0000" xalign 0.5
-            
+
             null height 20
             textbutton _("Close Mod Menu (F2)") action Hide("mod_menu") xalign 0.5 text_color "#ffffff"
-            
+
     key "mod_menu" action Hide("mod_menu")
     key "game_menu" action Hide("mod_menu")

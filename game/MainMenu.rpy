@@ -597,18 +597,6 @@ init python:
     def mm_get_status(cid, fallback="neutral"):
         return (persistent.mm_status or {}).get(cid, fallback)
 
-default persistent.mm_status = {}
-
-init python:
-    def mm_set_status(cid, status):
-        """Set a character's status. status is 'good' / 'mad' / 'neutral' (any string)."""
-        d = dict(persistent.mm_status or {})
-        d[cid] = status
-        persistent.mm_status = d
-
-    def mm_get_status(cid, fallback="neutral"):
-        return (persistent.mm_status or {}).get(cid, fallback)
-
 # A simple padlock drawn from rectangles (no image needed)
 define mm_lock = Fixed(
     Solid("#6d6d6d", xsize=10, ysize=36, xpos=14, ypos=0),
@@ -959,8 +947,8 @@ screen mm_choice(lbl, act):
 
 # ---------- The frame every menu page lives in ----------
 screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
-
     style_prefix "game_menu"
+    key "mod_menu" action Show("mod_menu")   # <--- Add this if it's missing
 
     # backdrop (same as the main menu)
     add mm_bg
@@ -1253,7 +1241,8 @@ screen mm_char_card(cid, cname, cimg, cdesc=""):
         at mm_card_hover
 
         if unlocked:
-            action NullAction()
+            # THIS is the line that makes the card clickable again!
+            action Show("mm_char_detail", cid=cid, cname=cname, cimg=cimg, cdesc=cdesc)
         else:
             action Notify(_("This character is still locked."))
 
@@ -1347,10 +1336,11 @@ screen mm_char_detail(cid, cname, cimg, cdesc):
 
 
 screen characters():
-
     tag menu
-
+    key "mod_menu" action Show("mod_menu")   # <--- ADD THIS LINE
+    
     use game_menu(_("Characters"), scroll="viewport"):
+        # ... rest of your code
 
         text _("Unlocked ") + str(mm_unlocked_count()) + " / " + str(len(mm_characters)) style "mm_section_text"
 
