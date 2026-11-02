@@ -466,6 +466,7 @@ screen mm_button(label, act, idx):
 # ---------- Main menu ----------
 screen main_menu():
     tag menu
+    key "mod_menu" action Show("mod_menu")
 
     # backdrop
     add mm_bg
@@ -573,7 +574,7 @@ define mm_empty_slot = Fixed(
 # Locked characters show as a gray card with a lock. Unlock one from your
 # script with:   $ mm_unlock("char_1")
 define mm_characters = [
-    ("char_1", "Character 1", None, "Add a description here."),
+    ("char_1", "Adrastea", "Portraits/AdrasteaPortrait.png", "A quiet girl from the park."),
     ("char_2", "Character 2", None, "Add a description here."),
     ("char_3", "Character 3", None, "Add a description here."),
     ("char_4", "Character 4", None, "Add a description here."),
@@ -583,14 +584,29 @@ define mm_characters = [
     ("char_8", "Character 8", None, "Add a description here."),
 ]
 
-default persistent.mm_unlocked = set()
+default persistent.mm_status = {}
 
 init python:
-    def mm_unlock(cid):
-        persistent.mm_unlocked = set(persistent.mm_unlocked or []) | set([cid])
+    def mm_set_status(cid, status):
+        """Set a character's status. status is 'good' / 'mad' / 'neutral' (any string)."""
+        d = dict(persistent.mm_status or {})
+        d[cid] = status
+        persistent.mm_status = d
 
-    def mm_is_unlocked(cid):
-        return cid in (persistent.mm_unlocked or [])
+    def mm_get_status(cid, fallback="neutral"):
+        return (persistent.mm_status or {}).get(cid, fallback)
+
+default persistent.mm_status = {}
+
+init python:
+    def mm_set_status(cid, status):
+        """Set a character's status. status is 'good' / 'mad' / 'neutral' (any string)."""
+        d = dict(persistent.mm_status or {})
+        d[cid] = status
+        persistent.mm_status = d
+
+    def mm_get_status(cid, fallback="neutral"):
+        return (persistent.mm_status or {}).get(cid, fallback)
 
 # A simple padlock drawn from rectangles (no image needed)
 define mm_lock = Fixed(
@@ -606,6 +622,7 @@ define mm_lock = Fixed(
 #   give FP in your script:   $ mm_add_fp(10)
 default persistent.Fp = mm_start_fp
 default persistent.mm_owned = set()
+default persistent.mm_unlocked = set()
 
 # One entry per shop item:  (id, name, price or None, character it unlocks or None)
 # price None = shows "Coming soon" and can't be bought yet. 8 items = a 4 + 4 layout
@@ -622,6 +639,19 @@ define mm_shop_items = [
 ]
 
 init python:
+
+    def mm_unlock(cid):
+        if persistent.mm_unlocked is None:
+            persistent.mm_unlocked = set()
+        else:
+            persistent.mm_unlocked = set(persistent.mm_unlocked)
+        persistent.mm_unlocked.add(cid)
+
+    def mm_is_unlocked(cid):
+        if persistent.mm_unlocked is None:
+            return False
+        return cid in persistent.mm_unlocked   # <--- Make sure this lines up perfectly
+
     def Fp():
         return persistent.Fp or 0
 
@@ -976,6 +1006,7 @@ screen navigation():
 screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
     style_prefix "game_menu"
+    key "mod_menu" action Show("mod_menu")
 
     # backdrop (same as the main menu)
     add mm_bg
@@ -1233,7 +1264,7 @@ screen confirm(message, yes_action, no_action):
 
 
 # ---------- Characters (locked cards) ----------
-screen mm_char_card(cid, cname, cimg):
+screen mm_char_card(cid, cname, cimg, cdesc=""):
 
     $ unlocked = mm_is_unlocked(cid)
 
@@ -1243,9 +1274,11 @@ screen mm_char_card(cid, cname, cimg):
         at mm_card_hover
 
         if unlocked:
-            action NullAction()
+            action Show("mm_char_detail", cid=cid, cname=cname, cimg=cimg, cdesc=cdesc)
         else:
             action Notify(_("This character is still locked."))
+            
+        # ... (keep the rest of the card code exactly the same) ...
 
         fixed:
             clipping True
@@ -1257,7 +1290,8 @@ screen mm_char_card(cid, cname, cimg):
                 add Solid("#ffd9e6") xpos 4 ypos 230 xsize 282 ysize 136
 
                 if cimg:
-                    add cimg xalign 0.5 yalign 0.0
+                    # The magic zoom=0.29 fix to show the whole image properly
+                    add Transform(cimg, zoom=0.29) xalign 0.5 ypos 10
                 else:
                     text "✿" size 140 color "#ffc2d6" xalign 0.5 ypos 70
 
@@ -1269,7 +1303,6 @@ screen mm_char_card(cid, cname, cimg):
                 add Solid("#8f8f8f")
                 add Solid("#b9b9b9") xpos 6 ypos 6 xsize 278 ysize 358
 
-                # gray silhouette
                 text "●" size 130 color "#a3a3a3" xalign 0.5 ypos 40
                 text "●" size 380 color "#a3a3a3" xalign 0.5 ypos 150
 
@@ -1277,6 +1310,60 @@ screen mm_char_card(cid, cname, cimg):
 
                 add Solid("#00000033") ysize 62 yalign 1.0
                 text _("Locked") style "mm_card_name" color "#6b6b6b" xalign 0.5 yalign 0.96
+
+screen mm_char_detail(cid, cname, cimg, cdesc):
+    modal True
+    zorder 200
+
+    # Dim background
+    add Solid("#6b2d4abb")
+
+    # Main Panel
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 900
+        ysize 700
+        background Solid("#fff3e8f2")
+        padding (40, 40)
+
+        vbox:
+            spacing 20
+            
+            # Title
+            text cname style "mm_gm_title" size 80 xalign 0.5
+
+            hbox:
+                spacing 40
+                yalign 0.5
+                
+                # Big Image
+                frame:
+                    xysize (350, 480)
+                    background Solid("#ffd9e6")
+                    if cimg:
+                        add Transform(cimg, zoom=0.35) xalign 0.5 yalign 0.0
+                    else:
+                        text "✿" size 150 color "#ffc2d6" xalign 0.5 yalign 0.5
+
+                # Description
+                vbox:
+                    xsize 400
+                    yalign 0.5
+                    text "BIOGRAPHY" style "mm_section_text"
+                    null height 10
+                    text cdesc style "about_text" size 26
+                    
+                    null height 40
+                    # Unlocked status text
+                    text "Current Status: Unlocked" style "mm_section_text" size 24 color "#3aa66b"
+
+            null height 20
+            
+            # Close button
+            textbutton _("Close") action Hide("mm_char_detail") style "mm_confirm_button" xalign 0.5
+
+    key "game_menu" action Hide("mm_char_detail")
 
 
 screen characters():
@@ -1296,7 +1383,7 @@ screen characters():
             box_wrap_spacing 30
 
             for (cid, cname, cimg, cdesc) in mm_characters:
-                use mm_char_card(cid, cname, cimg)
+                use mm_char_card(cid, cname, cimg, cdesc)
 
 
 # ---------- Shop ----------

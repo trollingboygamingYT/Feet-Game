@@ -2,7 +2,7 @@
 define a = Character("ADRASTEA", color="#e0407f")
 
 # | Backgrounds | #
-image bg_Park_W_Ao = "images/Adrastea/Scenes/Park_without_Adrastea.png"
+image bg_Park_Wo_A = "images/Adrastea/Scenes/Park_without_Adrastea.png"
 image Adrastea_Park_Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
 
 # | Transforms | #
@@ -38,14 +38,11 @@ transform adrastea_enter:
     parallel:
         easeout 0.4 xoffset 0
 
-# Remember how the first meeting went (use later in the story!)
-default adrastea_first_impression = "neutral"
-
 
 # The game starts here.
 label start:
 
-    scene bg_Park_W_Ao with fade
+    scene bg_Park_Wo_A with fade
 
     "The sun is out, the park is quiet, and you've got nowhere to be until later."
 
@@ -68,15 +65,28 @@ label start:
         y "What should I reply?"
 
         "I'm so sorry, I didn't see you there!":
-            $ adrastea_first_impression = "good"
+            
+            # 1. Show Feet Points and WAIT for it to finish
             $ mm_add_fp(1)
             show screen fp_popup(1)
-
+            pause 2.8
+            
+            # 2. Check if she was already unlocked. If not, unlock her and show popup!
+            if not mm_is_unlocked("char_1"):
+                $ mm_unlock("char_1")
+                $ mm_show_unlock("ADRASTEA")
+                pause 2.8
+                
             a "...That's alright. Just be more careful next time."
             a "Where are you heading off to, anyway?"
 
         "Hey, never touch me again!":
-            $ adrastea_first_impression = "bad"
+            
+            # 1. Check if she was already unlocked. If not, unlock her and show popup!
+            if not mm_is_unlocked("char_1"):
+                $ mm_unlock("char_1")
+                $ mm_show_unlock("ADRASTEA")
+                pause 2.8
 
             "You made her angry. No Feet Points this time."
 
@@ -85,5 +95,6 @@ label start:
 
     y "Well, I'm actually going downtown. Wanna come?"
 
-    # Continue your story from here
+    return
+
     return

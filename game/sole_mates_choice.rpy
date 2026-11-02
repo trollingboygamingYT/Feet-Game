@@ -124,3 +124,120 @@ screen fp_popup(amount=1):
             text "+[amount] Feet Point" style "mm_fp_popup_text" yalign 0.5
 
     timer 2.8 action Hide("fp_popup")
+
+# ---------- "Status changed" popup ----------
+# Use from the script:   $ mm_show_status("ADRASTEA", "Mad")
+# or:                    $ mm_show_status("ADRASTEA", "good")  # lowercase ok
+screen mm_status_popup(name, status):
+
+    $ key = (status or "").strip().lower()
+    if key == "good":
+        $ col  = "#3aa66b"
+        $ txt  = _("Good")
+        $ icon = u"✿"
+    elif key in ("bad", "mad", "angry"):
+        $ col  = "#c43a5b"
+        $ txt  = _("Mad")
+        $ icon = u"✖"
+    else:
+        $ col  = "#8a4b6a"
+        $ txt  = _("Neutral")
+        $ icon = u"●"
+
+    zorder 150
+
+    frame:
+        xalign 0.5
+        ypos 200
+        padding (36, 18)
+        background Solid("#fff3e8f2")
+        at fp_pop
+
+        hbox:
+            spacing 18
+            yalign 0.5
+
+            text icon size 46 color col bold True yalign 0.5
+            text "[name] — [txt]" style "mm_fp_popup_text" color col yalign 0.5
+
+    timer 2.8 action Hide("mm_status_popup")
+
+
+init python:
+    def mm_show_status(name, status):
+        """Convenience: call mm_show_status('ADRASTEA', 'mad') from script."""
+        renpy.show_screen("mm_status_popup", name=name, status=status)
+
+# ---------- "Status changed" popup ----------
+# Use from the script:   $ mm_show_status("ADRASTEA", "Mad")
+# or:                    $ mm_show_status("ADRASTEA", "good")  # lowercase ok
+screen mm_status_popup(name, status):
+
+    $ key = (status or "").strip().lower()
+    if key == "good":
+        $ col  = "#3aa66b"
+        $ txt  = _("Good")
+        $ icon = u"✿"
+    elif key in ("bad", "mad", "angry"):
+        $ col  = "#c43a5b"
+        $ txt  = _("Mad")
+        $ icon = u"✖"
+    else:
+        $ col  = "#8a4b6a"
+        $ txt  = _("Neutral")
+        $ icon = u"●"
+
+    zorder 150
+
+    frame:
+        xalign 0.5
+        ypos 200
+        padding (36, 18)
+        background Solid("#fff3e8f2")
+        at fp_pop
+
+        hbox:
+            spacing 18
+            yalign 0.5
+
+            text icon size 46 color col bold True yalign 0.5
+            text "[name] — [txt]" style "mm_fp_popup_text" color col yalign 0.5
+
+    timer 2.8 action Hide("mm_status_popup")
+
+
+init python:
+    def mm_show_status(name, status):
+        """Convenience: call mm_show_status('ADRASTEA', 'mad') from script."""
+        renpy.show_screen("mm_status_popup", name=name, status=status)
+
+# ---------- "Character Unlocked" popup ----------
+screen mm_unlock_popup(cname):
+    zorder 160
+
+    # NEW: Wait 0.8 seconds before showing the popup so it doesn't feel rushed
+    timer 0.8 action Show("mm_unlock_popup_actual", cname=cname)
+
+screen mm_unlock_popup(cname):
+    zorder 160
+
+    frame:
+        xalign 0.5
+        ypos 100
+        padding (40, 20)
+        background Solid("#fff3e8f2")
+        at fp_pop
+
+        hbox:
+            spacing 18
+            yalign 0.5
+
+            text "✦" size 44 color "#e6b800" bold True yalign 0.5
+            text "Unlocked: [cname]!" style "mm_fp_popup_text" color "#c8567f" yalign 0.5
+
+    timer 2.8 action Hide("mm_unlock_popup")
+
+init python:
+    def mm_show_unlock(name):
+        """Show the character unlocked popup."""
+        renpy.show_screen("mm_unlock_popup", cname=name)

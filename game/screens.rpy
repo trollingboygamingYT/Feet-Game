@@ -96,6 +96,7 @@ style frame:
 ## https://www.renpy.org/doc/html/screen_special.html#say
 
 screen say(who, what):
+    key "mod_menu" action Show("mod_menu")
 
     # ---------- TWEAK THESE ----------
     $ paper_width_pct = 0.80
@@ -120,6 +121,11 @@ screen say(who, what):
     $ paper_h = int(paper_w * img_h / float(img_w))
     $ current_top = text_top_pct if who else text_top_noname
 
+    ## If there's a side image, display it above the text. Do not display on the
+    ## phone variant - there's no room.
+    if not renpy.variant("small"):
+        add SideImage() xalign 0.0 yalign 1.0
+        
     fixed:
         xalign 0.5
         yalign 1.0
@@ -150,7 +156,6 @@ screen say(who, what):
             xsize int(paper_w * (1.0 - text_left_pct - text_right_pct))
 
 transform fp_float_up:
-
     alpha 0.0
     yoffset 20
     zoom 0.85
@@ -166,33 +171,6 @@ transform fp_float_up:
         alpha 0.0
         yoffset -75
         zoom 1.15
-
-
-screen fp_popup(amount=1):
-
-    zorder 300
-
-    text ("+%s FP" % amount if amount > 0 else "%s FP" % amount):
-
-        xpos 0.72
-        ypos 0.38
-
-        size 38
-        bold True
-
-        color ("#ff74ea" if amount > 0 else "#FF7777")
-
-        outlines [(3, "#263044", 0, 0)]
-
-        at fp_float_up
-
-    timer 1.4 action Hide("fp_popup")
-
-
-    ## If there's a side image, display it above the text. Do not display on the
-    ## phone variant - there's no room.
-    if not renpy.variant("small"):
-        add SideImage() xalign 0.0 yalign 1.0
 
 
 ## Make the namebox available for styling through the Character object.
@@ -304,6 +282,7 @@ style choice_vbox:
 
 
 screen quick_menu():
+    key "mod_menu" action Show("mod_menu")
     zorder 100
 
 
