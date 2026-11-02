@@ -68,7 +68,7 @@ Alle bg: park, Cinema binnen en buiten,
 
 
 
-Story; begint met jongen (YOU)
+STORY BEGIN; begint met jongen (YOU)
 
 Intro scherm --> A Story made by (Producing Name), Met een pad waarbij je bomen aan de zijkant ziet staan, bankjes en een vuilbak
 
