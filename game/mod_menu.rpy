@@ -1,5 +1,8 @@
+default mod_rollback_amount = "1"
+
 init python:
     config.keymap['mod_menu'] = ['K_F2']
+
 
     def mod_add_fp(n):
         persistent.Fp = (persistent.Fp or 0) + n
@@ -62,6 +65,25 @@ screen mod_menu():
             hbox:
                 spacing 15
                 textbutton _("Reset Owned Items") action Function(mod_clear_shop) text_color "#ffffff" text_hover_color "#ff8888"
+
+            text _("Gameplay:") size 24 color "#ffffff" bold True
+            hbox:
+                spacing 15
+                yalign 0.5
+                
+                text _("Rewind lines:") size 20 color "#aaaaaa" yalign 0.5
+                
+                # The input box
+                frame:
+                    background Solid("#444444")
+                    padding (10, 5)
+                    input:
+                        value VariableInputValue("mod_rollback_amount")
+                        length 3
+                        color "#ffffff"
+                        
+                # The button that triggers the rewind
+                textbutton _("⏪ Go Back") action [Hide("mod_menu"), Rollback(int(mod_rollback_amount) if mod_rollback_amount.isdigit() else 1)] text_color "#ffffff" text_hover_color "#ff88bb"
 
             null height 20
             textbutton _("⚠ WIPE ALL DATA (Reset Game)") action Function(mod_wipe_all) text_color "#ff0000" xalign 0.5

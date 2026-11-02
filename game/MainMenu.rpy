@@ -541,17 +541,18 @@ screen main_menu():
     # navigation
     vbox:
         xpos 100
-        ypos 500
-        spacing 4
+        ypos 450          # <--- Changed from 500 to 450 to move it up
+        spacing 2         # <--- Changed from 4 to 2 to make them fit
 
         use mm_button(_("Start"), Start(), 0)
-        use mm_button(_("Load"), ShowMenu("load"), 1)
-        use mm_button(_("Characters"), ShowMenu("characters"), 2)
-        use mm_button(_("Shop"), ShowMenu("shop"), 3)
-        use mm_button(_("Settings"), ShowMenu("preferences"), 4)
+        use mm_button(_("Continue"), Continue(), 1)
+        use mm_button(_("Load"), ShowMenu("load"), 2)
+        use mm_button(_("Characters"), ShowMenu("characters"), 3)
+        use mm_button(_("Shop"), ShowMenu("shop"), 4)
+        use mm_button(_("Settings"), ShowMenu("preferences"), 5)
 
         if renpy.variant("pc") or renpy.variant("web"):
-            use mm_button(_("Quit"), Quit(confirm=not main_menu), 5)
+            use mm_button(_("Quit"), Quit(confirm=not main_menu), 6)
 
     # Feet Points, top right (click it to open the Shop)
     use Fp_hud
@@ -956,6 +957,65 @@ screen mm_choice(lbl, act):
 
         text lbl style "mm_choice_text"
 
+# ---------- The frame every menu page lives in ----------
+screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
+
+    style_prefix "game_menu"
+
+    # backdrop (same as the main menu)
+    add mm_bg
+    text "●" size 760 color "#ffffff2a" at mm_glow(0.85, 0.20, 7.0)
+    text "●" size 520 color "#ffd2b633" at mm_glow(0.55, 0.98, 9.0)
+
+    # frosted navigation panel
+    add Solid("#ffffff3c") xsize 420 ysize config.screen_height
+    add Solid("#ffffffaa") xsize 3 ysize config.screen_height xpos 420
+
+    # content area
+    frame:
+        style "mm_content_frame"
+        xpos 450
+        ypos 160
+        xsize 1440
+        ysize 880
+        xpadding 30
+        ypadding 20
+        background Solid("#ffffff33")
+
+        if scroll == "viewport":
+            viewport:
+                yinitial yinitial
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                pagekeys True
+                side_yfill True
+                vbox:
+                    spacing spacing
+                    transclude
+        elif scroll == "vpgrid":
+            vpgrid:
+                cols 1
+                yinitial yinitial
+                scrollbars "vertical"
+                mousewheel True
+                draggable True
+                pagekeys True
+                side_yfill True
+                spacing spacing
+                transclude
+        else:
+            transclude
+
+    # THIS puts the title inside the left pink panel
+    text title style "mm_gm_title" xpos 60 ypos 40
+
+    use navigation
+
+    use Fp_hud
+
+    if main_menu:
+        key "game_menu" action ShowMenu("main_menu")
 
 # ---------- Navigation (left column of every menu page) ----------
 screen navigation():
@@ -965,118 +1025,37 @@ screen navigation():
         yalign 0.5
         spacing 6
 
+        # "Start" is only shown on the Main Menu
         if main_menu:
-
             use mm_nav_button(_("Start"), Start())
-
         else:
-
             use mm_nav_button(_("History"), ShowMenu("history"))
-
             use mm_nav_button(_("Save"), ShowMenu("save"))
 
         use mm_nav_button(_("Load"), ShowMenu("load"))
 
-        if mm_extras_in_game_menu:
-
+        if mm_extras_in_game_menu or main_menu:
             use mm_nav_button(_("Characters"), ShowMenu("characters"))
-
             use mm_nav_button(_("Shop"), ShowMenu("shop"))
 
         use mm_nav_button(_("Settings"), ShowMenu("preferences"))
 
         if _in_replay:
-
             use mm_nav_button(_("End Replay"), EndReplay(confirm=True))
-
         elif not main_menu:
-
             use mm_nav_button(_("Main Menu"), MainMenu())
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-
             use mm_nav_button(_("Help"), ShowMenu("help"))
 
         if renpy.variant("pc"):
-
             use mm_nav_button(_("Quit"), Quit(confirm=not main_menu))
 
-
-# ---------- The frame every menu page lives in ----------
-screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
-
-    style_prefix "game_menu"
-    key "mod_menu" action Show("mod_menu")
-
-    # backdrop (same as the main menu)
-    add mm_bg
-    text "●" size 760 color "#ffffff2a" at mm_glow(0.85, 0.20, 7.0)
-    text "●" size 520 color "#ffd2b633" at mm_glow(0.55, 0.98, 9.0)
-
-    for (bx, bsize, bdelay, bdur, bcol) in mm_bubbles[:10]:
-        text "●" size bsize color bcol at mm_float(bx, bdelay, bdur)
-
-    for (ptx, ptx2, pty, ptdelay, ptdur, ptspin, ptglyph, ptsize, ptcol) in mm_petals[:12]:
-        text ptglyph size ptsize color ptcol at mm_petal(ptx, ptx2, pty, ptdelay, ptdur, ptspin)
-
-    # frosted navigation panel
-    add Solid("#ffffff3c") xsize 420 ysize config.screen_height
-    add Solid("#ffffffaa") xsize 3 ysize config.screen_height xpos 420
-
-    # content area
-    frame:
-        style "mm_content_frame"
-
-        if scroll == "viewport":
-
-            viewport:
-                yinitial yinitial
-                scrollbars "vertical"
-                mousewheel True
-                draggable True
-                pagekeys True
-
-                side_yfill True
-
-                vbox:
-                    spacing spacing
-
-                    transclude
-
-        elif scroll == "vpgrid":
-
-            vpgrid:
-                cols 1
-                yinitial yinitial
-
-                scrollbars "vertical"
-                mousewheel True
-                draggable True
-                pagekeys True
-
-                side_yfill True
-
-                spacing spacing
-
-                transclude
-
-        else:
-
-            transclude
-
-    use navigation
-
+    # Return button at the bottom
     vbox:
         xpos 50
         yalign 0.97
         use mm_nav_button(_("Return"), Return())
-
-    text title style "mm_gm_title" xpos 60 ypos 30
-
-    use Fp_hud
-
-    if main_menu:
-        key "game_menu" action ShowMenu("main_menu")
 
 
 # ---------- Save / Load slots ----------
@@ -1274,35 +1253,36 @@ screen mm_char_card(cid, cname, cimg, cdesc=""):
         at mm_card_hover
 
         if unlocked:
-            action Show("mm_char_detail", cid=cid, cname=cname, cimg=cimg, cdesc=cdesc)
+            action NullAction()
         else:
             action Notify(_("This character is still locked."))
-            
-        # ... (keep the rest of the card code exactly the same) ...
 
         fixed:
             clipping True
 
             if unlocked:
 
-                add Solid("#ffffffe0")
-                add Solid("#fff0f6") xpos 4 ypos 4 xsize 282 ysize 362
-                add Solid("#ffd9e6") xpos 4 ypos 230 xsize 282 ysize 136
+                # White background just in case
+                add Solid("#ffffff")
 
                 if cimg:
-                    # The magic zoom=0.29 fix to show the whole image properly
-                    add Transform(cimg, zoom=0.29) xalign 0.5 ypos 10
+                    # This perfectly scales the image to fill the 290x370 card 
+                    # without stretching or zooming weirdly.
+                    add Transform(cimg, fit="cover", xysize=(290, 370))
                 else:
-                    text "✿" size 140 color "#ffc2d6" xalign 0.5 ypos 70
+                    add Solid("#fff0f6")
+                    text "✿" size 140 color "#ffc2d6" xalign 0.5 yalign 0.5
 
+                # Pink name plate at the bottom
                 add Solid("#c8567fdd") ysize 62 yalign 1.0
                 text cname style "mm_card_name" xalign 0.5 yalign 0.96
 
             else:
 
-                add Solid("#8f8f8f")
-                add Solid("#b9b9b9") xpos 6 ypos 6 xsize 278 ysize 358
+                add Solid("#e0e0e0")
+                add Solid("#c4c4c4") xpos 6 ypos 6 xsize 278 ysize 358
 
+                # Gray silhouette
                 text "●" size 130 color "#a3a3a3" xalign 0.5 ypos 40
                 text "●" size 380 color "#a3a3a3" xalign 0.5 ypos 150
 
