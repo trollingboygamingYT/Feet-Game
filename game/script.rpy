@@ -1,9 +1,27 @@
-﻿define y = Character("YOU", color="#6b2d4a")
+﻿default player_name = "YOU"
+default walk_style = ""
+define y = Character("[player_name!u]", color="#6b2d4a")
 define a = Character("ADRASTEA", color="#e0407f")
+
+# How long the credits slide stays on screen (seconds).
+define credits_hold = 4.0
+
+# How long each intro image stays on screen (seconds).
+# Song is ~50s: credits (~7s) + 5 images x 8s (~40s) lines up well.
+define intro_hold = 4.5
 
 # | Backgrounds | #
 image bg_Park_Wo_A = "images/Adrastea/Scenes/Park_without_Adrastea.png"
+
+# | Adrastea | #
 image Adrastea_Park_Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
+
+# | Intro images (change these paths to your own files) | #
+image intro_1 = "images/Intro/Background1.png"
+image intro_2 = "images/Intro/Background2.png"
+image intro_3 = "images/Intro/Background3.png"
+image intro_4 = "images/Intro/Background4.png"
+image intro_5 = "images/Intro/Background5.png"
 
 # | Transforms | #
 transform screen_shake:
@@ -109,46 +127,172 @@ screen mm_credits_line(header, sub):
             add Solid("#c8567f99") xsize 160 ysize 3 yalign 0.5
 
 
+# ---------- Intro captions ----------
+transform intro_cap_fade:
+    on show:
+        alpha 0.0
+        yoffset 14
+        parallel:
+            linear 0.9 alpha 1.0
+        parallel:
+            easeout 0.9 yoffset 0
+    on hide:
+        linear 0.6 alpha 0.0
+
+screen intro_caption(txt):
+    zorder 50
+
+    fixed:
+        at intro_cap_fade
+
+        # soft plum band so the text is readable on any image
+        add Solid("#3f1c3166") ysize 190 yalign 1.0
+
+        text txt:
+            xalign 0.5
+            yalign 0.93
+            xmaximum 1400
+            text_align 0.5
+            font mm_title_font
+            size 46
+            color "#fff3e8"
+            outlines [(3, "#6b2d4a", 0, 0)]
+
+
+# ---------- Name screen (shown at the end of the intro) ----------
+style intro_name_input is input:
+    font mm_title_font
+    size 62
+    color "#6b2d4a"
+    xalign 0.5
+
+screen intro_name_input():
+    modal True
+    zorder 60
+
+    add Solid("#6b2d4a66")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 820
+        padding (50, 40)
+        background Solid("#fff3e8f2")
+        at mm_fade_in(0.0)
+
+        vbox:
+            xalign 0.5
+            spacing 24
+
+            text "✿" size 40 color "#e0407f" xalign 0.5
+            text "What's your name?" font mm_title_font size 58 color "#6b2d4a" xalign 0.5
+
+            frame:
+                xalign 0.5
+                xsize 560
+                padding (24, 14)
+                background Solid("#ffffff")
+                input:
+                    style "intro_name_input"
+                    value VariableInputValue("player_name", returnable=True)
+                    length 14
+                    exclude "{}[]<>"
+
+            textbutton _("Continue"):
+                style "mm_confirm_button"
+                xalign 0.5
+                sensitive player_name.strip() != ""
+                text_insensitive_color "#b5688a66"
+                action Return()
+
+            text "Type your name, then press Enter":
+                font mm_title_font
+                size 22
+                color "#8a4b6acc"
+                xalign 0.5
+
+
 label start:
 
     $ mm_reset_progress()
     $ persistent.game_started = True
     $ renpy.save_persistent()
 
-    # 1. Start the intro song.
-    play music "Music/Intro_Song.ogg" fadein 1.0 noloop volume 0.35
+    # Lock the intro: no skipping, no rolling back.
+    $ _skipping = False
+    $ config.allow_skipping = False
+    $ renpy.block_rollback()
 
-    # --- Auto-playing credit sequence, clean pink backdrop ---
+    # 1. Start the intro song.
+    # play music "Music/Intro_Song.ogg" fadein 1.0 noloop volume 0.35 => remove "#" to fix sound
+
+    # --- Short credits slide Intro ---
     scene black with fade
     show screen mm_credits_bg
     with Dissolve(0.8)
 
-    show screen mm_credits_line("{size=30}MADE BY{/size}", "Your Name Here")
+    show screen mm_credits_line("{size=30}A GAME MADE BY{/size}", "ACTUALDYNAMICS STUDIO")
     with Dissolve(0.6)
-    $ renpy.pause(3.0, hard=True)
+    $ renpy.pause(credits_hold, hard=True) # => credits_hold = 4 seconden
     hide screen mm_credits_line
     with Dissolve(0.6)
 
-    show screen mm_credits_line("{size=30}A SHORT STORY ABOUT{/size}", "bumping into someone")
-    with Dissolve(0.6)
-    $ renpy.pause(3.0, hard=True)
-    hide screen mm_credits_line
-    with Dissolve(0.6)
-
-    show screen mm_credits_line("{size=30}STARRING{/size}", "ADRASTEA")
-    with Dissolve(0.6)
-    $ renpy.pause(3.0, hard=True)
-    hide screen mm_credits_line
-    with Dissolve(0.6)
-
-    # fade the pink backdrop away and cut to the park
     hide screen mm_credits_bg
     with Dissolve(0.8)
 
+    # --- Automatic image sequence with captions (can't be skipped) ---
+    scene intro_1 with Dissolve(1.0)
+    show screen intro_caption("A sunny morning in the park.\nThe kind of morning that rarely happens.")
+    $ renpy.pause(intro_hold, hard=True)
+    hide screen intro_caption
+
+    scene intro_2 with Dissolve(1.0)
+    show screen intro_caption("The wind is warm, and the sun\nmakes you want to drift away.")
+    $ renpy.pause(intro_hold, hard=True)
+    hide screen intro_caption
+
+    scene intro_3 with Dissolve(1.0)
+    show screen intro_caption("Nothing to do,\nbut just chill all day long.")
+    $ renpy.pause(intro_hold, hard=True)
+    hide screen intro_caption
+
+    scene intro_4 with Dissolve(1.0)
+    show screen intro_caption("Your head is somewhere in the clouds,\nnot aware of what's happening.")
+    $ renpy.pause(intro_hold, hard=True)
+    hide screen intro_caption
+
+    scene intro_5 with Dissolve(1.0)
+    show screen intro_caption("Every story begins with a name...")
+    $ renpy.pause(2.0, hard=True)
+    hide screen intro_caption
+
+    # --- Choose your name (over the last intro image) ---
+    $ player_name = ""
+    while player_name == "":
+        call screen intro_name_input
+        $ player_name = player_name.strip()
+
+    # Unlock skipping again for the actual game.
+    $ config.allow_skipping = True
+
     # --- Now the actual scene begins ---
     scene bg_Park_Wo_A with fade
+    "[player_name]... a good name for a good day."
     "The sun is out, the park is quiet, and you've got nowhere to be until later."
     y "What a lovely day!"
+
+    # A small flavour choice (no points)
+    menu:
+        "What are you doing on your walk?"
+
+        "Listening to my favourite playlist":
+            $ walk_style = "music"
+            "You slip your earbuds in and let the music carry you along the path."
+
+        "Just enjoying the quiet":
+            $ walk_style = "quiet"
+            "You let the birds and the breeze be your soundtrack."
+
     "You close your eyes for a second, smiling up at the sky and not looking where you're walking..."
 
     # --- The bump (music stops here) ---
@@ -179,7 +323,6 @@ label start:
             pause 2.8
 
             a "...That's alright. Just be more careful next time."
-            a "Where are you heading off to, anyway?"
 
         "Hey, never touch me again!":
 
@@ -196,6 +339,34 @@ label start:
             a "Wow, there's no need to be so aggressive!"
             y "Sorry... I'm just not in the mood right now."
 
-    y "Well, I'm actually going downtown. Wanna come?"
+    # --- Both choices come together here ---
+    a "...Anyway. I'm Adrastea."
+    a "And you are?"
+
+    y "I'm [player_name]."
+
+    a "[player_name]... Alright. Not the worst way to meet someone."
+
+    if walk_style == "music":
+        a "Next time, maybe take one earbud out. You almost took me down."
+    else:
+        a "You really weren't looking where you were going, were you?"
+
+    menu:
+        a "So, where were you off to?"
+
+        "Downtown, want to come with me?":
+            $ mm_give_trust("char_1", 5)
+            pause 2.8
+            a "Hm. You're bold, I'll give you that."
+            a "Fine. But you're buying the first drink."
+
+        "Nowhere special, just walking.":
+            a "Same. I came here to think."
+            a "...Walk with me, then. Quietly."
+
+    # --- Next scene ---
+    # scene bg_Downtown with fade
+    "To be continued..."
 
     return

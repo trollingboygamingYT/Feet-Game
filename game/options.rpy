@@ -30,8 +30,8 @@ define config.hard_rollback_limit = 5
 
 
 # Put your music file in the game/ folder (or a subfolder like game/audio/)
-define config.main_menu_music = "<volume 0.15>Music/Main-Menu.L.ogg"
-define config.main_menu_music_fadein = 2.0
+# define config.main_menu_music = "<volume 0.15>Music/Main-Menu.L.ogg"
+# define config.main_menu_music_fadein = 2.0
 
 
 ## Text that is placed on the game's about screen. Place the text between the

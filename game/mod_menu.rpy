@@ -3,7 +3,9 @@ default mod_rollback_remaining = 0
 default mod_trust_idx = 0
 
 init python:
-    config.keymap['mod_menu'] = ['K_F2']
+    if config.developer:
+        config.keymap['mod_menu'] = ['K_F2']
+        config.underlay.append(renpy.Keymap(mod_menu=Show("mod_menu")))
 
     def mod_add_fp(n):
         persistent.Fp = (persistent.Fp or 0) + n
