@@ -1,7 +1,5 @@
 To-Do
 -------
-- Goonen
-
 - images veranderen in videos
 
 - quick menu als GUI veranderen (ESC)
