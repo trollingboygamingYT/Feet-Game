@@ -544,8 +544,12 @@ screen main_menu():
         ypos 450          # <--- Changed from 500 to 450 to move it up
         spacing 2         # <--- Changed from 4 to 2 to make them fit
 
-        use mm_button(_("Start"), Start(), 0)
-        use mm_button(_("Continue"), Continue(), 1)
+        if persistent.game_started and renpy.newest_slot():
+            # a game was already started: Continue on top, New Game under it
+            use mm_button(_("Continue"), Continue(), 0)
+            use mm_button(_("New Game"), Start(), 1)
+        else:
+            use mm_button(_("Start"), Start(), 0)
         use mm_button(_("Load"), ShowMenu("load"), 2)
         use mm_button(_("Characters"), ShowMenu("characters"), 3)
         use mm_button(_("Shop"), ShowMenu("shop"), 4)
@@ -610,6 +614,7 @@ define mm_lock = Fixed(
 # FP is stored in `persistent`, so it is shared by every save.
 #   give FP in your script:   $ mm_add_fp(10)
 default persistent.Fp = mm_start_fp
+default persistent.game_started = False
 default persistent.mm_owned = set()
 default persistent.mm_unlocked = set()
 
@@ -1015,7 +1020,11 @@ screen navigation():
 
         # "Start" is only shown on the Main Menu
         if main_menu:
-            use mm_nav_button(_("Start"), Start())
+            if persistent.game_started and renpy.newest_slot():
+                use mm_nav_button(_("Continue"), Continue())
+                use mm_nav_button(_("New Game"), Start())
+            else:
+                use mm_nav_button(_("Start"), Start())
         else:
             use mm_nav_button(_("History"), ShowMenu("history"))
             use mm_nav_button(_("Save"), ShowMenu("save"))

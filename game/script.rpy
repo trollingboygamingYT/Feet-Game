@@ -42,6 +42,9 @@ transform adrastea_enter:
 # The game starts here.
 label start:
 
+    $ persistent.game_started = True
+    $ renpy.save_persistent()
+
     scene bg_Park_Wo_A with fade
 
     "The sun is out, the park is quiet, and you've got nowhere to be until later."
