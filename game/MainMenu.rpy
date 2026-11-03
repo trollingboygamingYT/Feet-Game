@@ -1560,7 +1560,6 @@ screen Fp_hud():
         xalign 0.985
         ypos 24
         xysize (340, 92)
-        action (ShowMenu("shop") if mm_shop_enabled else Function(mm_shop_poke))
         at mm_card_hover
         hover_sound None
 
