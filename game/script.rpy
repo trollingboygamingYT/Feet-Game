@@ -246,7 +246,7 @@ label start:
     $ intro_active = True
 
     # | START THE INTRO SONG | #
-    # play music "Music/Intro_Song.ogg" fadein 2.0 noloop volume 0.25
+    # play music "Music/Intro/Intro_Song.ogg" fadein 2.0 noloop volume 0.25
 
     # | CREDITS SLIDE INTRO | #
     scene black with fade
@@ -333,21 +333,29 @@ label intro_choose_name:
 
         "Just enjoying the quiet":
             $ walk_style = "quiet"
+            play sound "Music/SFX/Nature_SFX.ogg" fadein 1.0 volume 0.6
             "You let the birds and the breeze be your soundtrack."
-            # | BIRDS SFX | #
+            
+            # Tiny 0.1 second pause to let the menu close
+            $ renpy.pause(0.1, hard=True) 
+            
+            # Play the audio (using the 'sound' channel)
+            
 
     # Show the text, but DO NOT wait for the player to click
     $ renpy.say(None, "You close your eyes for a second, smiling up at the sky and not looking where you're walking...", interact=False)
     
-    # Lock the game for exactly 26 seconds. The player cannot skip this.
+    # Lock the game for exactly 20 seconds
     $ config.allow_skipping = False
     $ renpy.pause(20.0, hard=True)
     
-    # | THE BUMP (MUSIC STOPS HERE) | #
+    # | THE BUMP (AUDIO STOPS HERE) | #
+    stop sound
     stop music
+    play sound "Music/SFX/Thud_SFX.ogg"
     "*THUD*" with vpunch
 
-    "You stumble backwards, heart racing."
+    "You snap out of the moment. You look up and..."
     show Adrastea_Park_Annoyed at adrastea_enter with dissolve
     "You bumped into a girl!"
     a "Oh, watch where you're going!"
