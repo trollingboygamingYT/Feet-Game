@@ -32,6 +32,7 @@ define config.main_game_transition = Dissolve(0.5)
 # ---------- Easy knobs ----------
 define mm_title_words = ["Sole", "Mates"]                # two lines of the title (change me!)
 define mm_tagline     = "A  S T O R Y  O F  S T E P S"   # small text above the title
+define mm_shop_enabled = False                           # False = Shop shows "Coming Soon" and can't be opened. Set to True to open it.
 define mm_extras_in_game_menu = True                      # True = also list Characters/Shop in the Load/Settings page navigation
 define mm_start_fp      = 0                                 # Feet Points a brand-new player starts with
 define mm_credit      = ""                               # e.g. "made with ♥ by Name & Name"
@@ -45,6 +46,27 @@ define mm_title_c2    = "#e0407f"                        # title gradient end (h
 init python:
     import random
     import math
+
+    # "Coming Soon" shop button: gets angrier the more you press it, and finally closes the game
+    mm_shop_pokes = 0
+    mm_shop_rants = [
+        "Coming Soon!",                                                  # 1
+        "Coming Soon!",                                                  # 2
+        "Coming Soon!",                                                  # 3
+        "Coming Soon!",                                                  # 4
+        "Goddammit, stop pressing the fucking button! It's coming SOON!",            # 5
+        "I SAID it's coming soon. Are you even reading this?",                          # 6
+        "Seriously?! Do you think pressing it more will magically make it come sooner?",         # 7
+        "Stop pressing or i close the game...",                                                  # 8
+    ]
+
+    def mm_shop_poke():
+        global mm_shop_pokes
+        mm_shop_pokes += 1
+        if mm_shop_pokes <= len(mm_shop_rants):
+            renpy.notify(mm_shop_rants[mm_shop_pokes - 1])
+        else:
+            renpy.quit()      # one press after the warning: game closes
 
     # Smooth vertical gradient built from thin strips (no image files needed)
     def mm_vgradient(top, bottom, steps=96):
@@ -463,6 +485,82 @@ screen mm_button(label, act, idx):
         add Solid("#ffffff88") xsize 500 ysize 2 yalign 1.0 xpos 8
 
 
+# ---------- Notification popups (the messages at the top of the screen) ----------
+transform mm_notify_in:
+    on show:
+        alpha 0.0
+        yoffset -50
+        parallel:
+            ease 0.25 alpha 1.0
+        parallel:
+            easeout_back 0.45 yoffset 0
+    on hide:
+        parallel:
+            ease 0.35 alpha 0.0
+        parallel:
+            ease 0.35 yoffset -25
+
+# angry messages drop in and shake
+transform mm_notify_shake:
+    on show:
+        alpha 0.0
+        yoffset -50
+        xoffset 0
+        parallel:
+            ease 0.2 alpha 1.0
+        parallel:
+            easeout_back 0.4 yoffset 0
+        parallel:
+            pause 0.2
+            linear 0.05 xoffset 18
+            linear 0.05 xoffset -18
+            linear 0.05 xoffset 12
+            linear 0.05 xoffset -12
+            linear 0.05 xoffset 6
+            linear 0.05 xoffset 0
+    on hide:
+        ease 0.35 alpha 0.0
+
+style mm_notify_text:
+    font gui.text_font
+    size 26
+    bold True
+    color "#6b2d4a"
+    outlines [(2, "#ffffff", 0, 0)]
+
+style mm_notify_text_angry is mm_notify_text:
+    color "#a8142c"
+
+screen notify(message):
+
+    zorder 100
+
+    # shop-button rants (5th press onward) get the angry look
+    $ mm_angry = message in mm_shop_rants[4:]
+
+    frame:
+        at (mm_notify_shake if mm_angry else mm_notify_in)
+        xalign 0.5
+        ypos 36
+        padding (4, 4)
+        background Solid("#ffffff")
+
+        frame:
+            padding (34, 16, 40, 16)
+            background Fixed(Solid("#ffd7e6" if mm_angry else "#fff3e8"),
+                             Solid("#d6153a" if mm_angry else "#e0407f", xsize=8))
+
+            hbox:
+                spacing 16
+                yalign 0.5
+
+                text ("⚠" if mm_angry else "✿") size 32 color ("#d6153a" if mm_angry else "#e0407f") yalign 0.5
+
+                text "[message!tq]" style ("mm_notify_text_angry" if mm_angry else "mm_notify_text") xmaximum 1000 yalign 0.5
+
+    timer (4.5 if mm_angry else 3.25) action Hide("notify")
+
+
 # ---------- Main menu ----------
 screen main_menu():
     tag menu
@@ -552,7 +650,10 @@ screen main_menu():
             use mm_button(_("Start"), Start(), 0)
         use mm_button(_("Load"), ShowMenu("load"), 2)
         use mm_button(_("Characters"), ShowMenu("characters"), 3)
-        use mm_button(_("Shop"), ShowMenu("shop"), 4)
+        if mm_shop_enabled:
+            use mm_button(_("Shop"), ShowMenu("shop"), 4)
+        else:
+            use mm_button(_("Coming Soon"), Function(mm_shop_poke), 4)
         use mm_button(_("Settings"), ShowMenu("preferences"), 5)
 
         if renpy.variant("pc") or renpy.variant("web"):
@@ -622,10 +723,10 @@ default persistent.mm_unlocked = set()
 # price None = shows "Coming soon" and can't be bought yet. 8 items = a 4 + 4 layout
 # (any number works: rows are added automatically).
 define mm_shop_items = [
-    ("buy_char_1", "Character 1", 100, "char_1"),
-    ("buy_char_2", "Character 2", 150, "char_2"),
-    ("buy_char_3", "Character 3", 200, "char_3"),
-    ("buy_char_4", "Character 4", 250, "char_4"),
+    ("buy_char_1", "Character 1", None, None), # <= "char_1" in place of None
+    ("buy_char_2", "Character 2", None, None), # <= "char_2" in place of None
+    ("buy_char_3", "Character 3", None, None), # <= "char_3" in place of None
+    ("buy_char_4", "Character 4", None, None), # <= "char_4" in place of None
     ("bonus_scene", "Bonus Scene", None, None),
     ("new_outfit", "New Outfit", None, None),
     ("wallpaper", "Wallpaper", None, None),
@@ -1033,7 +1134,10 @@ screen navigation():
 
         if mm_extras_in_game_menu or main_menu:
             use mm_nav_button(_("Characters"), ShowMenu("characters"))
-            use mm_nav_button(_("Shop"), ShowMenu("shop"))
+            if mm_shop_enabled:
+                use mm_nav_button(_("Shop"), ShowMenu("shop"))
+            else:
+                use mm_nav_button(_("Coming Soon"), Function(mm_shop_poke))
 
         use mm_nav_button(_("Settings"), ShowMenu("preferences"))
 
@@ -1423,20 +1527,29 @@ screen shop():
 
     use game_menu(_("Shop"), scroll="viewport"):
 
-        text _("Spend your Feet Points!") style "mm_section_text"
+        if not mm_shop_enabled:
 
-        null height 16
+            # locked: nothing to buy yet
+            text _("Coming Soon") style "mm_section_text" size 60
+            null height 10
+            text _("The Shop isn't open yet. Check back later!") style "mm_section_text" size 28 color "#b5688a"
 
-        $ mm_rows = (len(mm_shop_items) + 3) // 4
+        else:
 
-        grid 4 mm_rows:
-            spacing 30
+            text _("Spend your Feet Points!") style "mm_section_text"
 
-            for (iid, iname, iprice, iunlock) in mm_shop_items:
-                use mm_shop_card(iid, iname, iprice, iunlock)
+            null height 16
 
-            for i in range(mm_rows * 4 - len(mm_shop_items)):
-                null width 290 height 330
+            $ mm_rows = (len(mm_shop_items) + 3) // 4
+
+            grid 4 mm_rows:
+                spacing 30
+
+                for (iid, iname, iprice, iunlock) in mm_shop_items:
+                    use mm_shop_card(iid, iname, iprice, iunlock)
+
+                for i in range(mm_rows * 4 - len(mm_shop_items)):
+                    null width 290 height 330
 
 
 # ----------- Feet Points badge (top right) ----------
@@ -1447,7 +1560,7 @@ screen Fp_hud():
         xalign 0.985
         ypos 24
         xysize (340, 92)
-        action ShowMenu("shop")
+        action (ShowMenu("shop") if mm_shop_enabled else Function(mm_shop_poke))
         at mm_card_hover
         hover_sound None
 
