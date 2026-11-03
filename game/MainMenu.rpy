@@ -548,7 +548,7 @@ screen notify(message):
         frame:
             padding (34, 16, 40, 16)
             background Fixed(Solid("#ffd7e6" if mm_angry else "#fff3e8"),
-                             Solid("#d6153a" if mm_angry else "#e0407f", xsize=8))
+                            Solid("#d6153a" if mm_angry else "#e0407f", xsize=8))
 
             hbox:
                 spacing 16
