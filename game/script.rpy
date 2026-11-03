@@ -1,6 +1,12 @@
 ﻿default player_name = "YOU"
 default walk_style = "" # | Walk_style is voor een keuze later | #
 default intro_active = False
+define Music = [
+    "Music/Music_Choice/Song1.ogg",
+    "Music/Music_Choice/Song2.ogg",
+    "Music/Music_Choice/Song3.ogg"
+
+]
 define y = Character("[player_name!u]", color="#6b2d4a")
 define a = Character("ADRASTEA", color="#e0407f")
 
@@ -221,6 +227,11 @@ screen intro_name_input():
                 color "#8a6a5a"
                 xalign 0.5
 
+# Put this near your other screens (like mm_credits_bg)
+screen music_stop_timer():
+    # Wait 26 seconds, then fade the music out over 2 seconds
+    timer 26.0 action [Stop("music", fadeout=2.0), Hide("music_stop_timer")]
+
 
 label start:
 
@@ -299,27 +310,42 @@ label intro_choose_name:
     scene bg_Park_Wo_A with fade
     "[player_name] Huh? What an interesting name..."
     y "Ahhh what a lovely day!"
+    stop music fadeout 2.0
 
     # | A SMALL FLAVOUR CHOICE (NO POINTS) | #
     menu:
         "What are you doing on your walk?"
 
-        "Listening to my favourite playlist":
+        "Listening to my favourite song":
             $ walk_style = "music"
+
+            menu:
+                "Which song do you want to listen to?"
+
+                "Crowded House - Dont Dream Its Over":
+                    play music Music[0] fadein 1.0 volume 0.15
+                "Cass Elliot - Make Your Own Kind Of Music":
+                    play music Music[1] fadein 1.0 volume 0.15
+                "The Handsome Family - Far From Any Road":
+                    play music Music[2] fadein 1.0 volume 0.15
+
             "You slip your earbuds in and let the music carry you along the path."
-            # | MUZIEK ADDEN ZODAT JE MUZIEK HOORT | #
 
         "Just enjoying the quiet":
             $ walk_style = "quiet"
             "You let the birds and the breeze be your soundtrack."
             # | BIRDS SFX | #
 
-    "You close your eyes for a second, smiling up at the sky and not looking where you're walking..."
-
+    # Show the text, but DO NOT wait for the player to click
+    $ renpy.say(None, "You close your eyes for a second, smiling up at the sky and not looking where you're walking...", interact=False)
+    
+    # Lock the game for exactly 26 seconds. The player cannot skip this.
+    $ config.allow_skipping = False
+    $ renpy.pause(20.0, hard=True)
+    
     # | THE BUMP (MUSIC STOPS HERE) | #
+    stop music
     "*THUD*" with vpunch
-    stop music fadeout 2.0
-    pause 2.0
 
     "You stumble backwards, heart racing."
     show Adrastea_Park_Annoyed at adrastea_enter with dissolve
