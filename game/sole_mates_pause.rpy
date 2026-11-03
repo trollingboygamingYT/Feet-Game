@@ -24,12 +24,17 @@ screen quick_menu():
 
 # ---------- Pause menu ----------
 screen pause_menu():
-
     tag menu
     modal True
 
-    # dim the game behind it, soft plum tint
+    # pause music while this menu is open, resume when closed
+    on "show" action PauseAudio("music", True)
+    on "hide" action PauseAudio("music", False)
+
+    key "game_menu" action Return()
+
     add Solid("#6b2d4a88")
+    # ... rest unchanged
 
     # a few petals drifting for atmosphere (remove these 2 lines if you want it plain)
     for (ptx, ptx2, pty, ptdelay, ptdur, ptspin, ptglyph, ptsize, ptcol) in mm_petals[:14]:
