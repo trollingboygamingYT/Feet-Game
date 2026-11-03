@@ -42,6 +42,8 @@ transform adrastea_enter:
 # The game starts here.
 label start:
 
+    $ mm_reset_progress()
+
     $ persistent.game_started = True
     $ renpy.save_persistent()
 
@@ -68,30 +70,34 @@ label start:
         y "What should I reply?"
 
         "I'm so sorry, I didn't see you there!":
-            
-            # 1. Show Feet Points and WAIT for it to finish (clicks are blocked)
+
             $ mm_add_fp(1)
             show screen fp_popup(1)
             pause 2.8
-            
-            # 2. After the wait, check if locked. If so, unlock and wait again.
+
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
                 pause 2.8
-                
+
+            # trust bar appears after FP / unlock
+            $ mm_give_trust("char_1", 10)
+            pause 2.8
+
             a "...That's alright. Just be more careful next time."
             a "Where are you heading off to, anyway?"
 
         "Hey, never touch me again!":
-            
-            # 1. Check if locked. If so, unlock and wait.
+
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
                 pause 2.8
 
             "You made her angry. No Feet Points this time."
+
+            $ mm_give_trust("char_1", -10)
+            pause 2.8
 
             a "Wow, there's no need to be so aggressive!"
             y "Sorry... I'm just not in the mood right now."

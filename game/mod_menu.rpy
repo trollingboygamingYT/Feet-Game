@@ -1,5 +1,6 @@
 default mod_rollback_amount = "1"
 default mod_rollback_remaining = 0
+default mod_trust_idx = 0
 
 init python:
     config.keymap['mod_menu'] = ['K_F2']
@@ -40,6 +41,24 @@ init python:
         n = max(1, min(n, 100))   # keep it between 1 and 100
         renpy.hide_screen("mod_menu")
         renpy.rollback(checkpoints=n, force=True, greedy=True)
+
+    def mod_reset_trust():
+        persistent.mm_trust = {}
+        renpy.notify("Reset all trust")
+
+    def mod_trust_cycle(step):
+        store.mod_trust_idx = (store.mod_trust_idx + step) % len(mm_characters)
+        renpy.restart_interaction()
+
+    def mod_add_trust(n):
+        cid = mm_characters[store.mod_trust_idx][0]
+        mm_set_trust(cid, mm_get_trust(cid) + n)   # clamps between 0 and 100
+        renpy.restart_interaction()
+
+    def mod_set_trust(n):
+        cid = mm_characters[store.mod_trust_idx][0]
+        mm_set_trust(cid, n)
+        renpy.restart_interaction()
 
 
 # ---------- Animations ----------
@@ -253,11 +272,44 @@ screen mod_menu():
                             spacing 10
                             use mod_pill(_("Unlock All"), Function(mod_unlock_all), "#e0407f", "#c8567f")
                             use mod_pill(_("Lock All"),   Function(mod_lock_all),   "#b5688a", "#8a4b6a")
+                            use mod_pill(_("Reset Trust"), Function(mod_reset_trust), "#b5688a", "#8a4b6a")
 
                     vbox:
                         spacing 10
                         text _("Shop") style "mod_section"
                         use mod_pill(_("Reset Owned Items"), Function(mod_clear_shop), "#b5688a", "#8a4b6a")
+                        
+                # ---- Trust ----
+                vbox:
+                    spacing 10
+                    text _("Trust") style "mod_section"
+
+                    hbox:
+                        spacing 10
+                        yalign 0.5
+
+                        $ t_cid = mm_characters[mod_trust_idx][0]
+                        $ t_name = mm_characters[mod_trust_idx][1]
+
+                        use mod_pill("◀", Function(mod_trust_cycle, -1), "#b5688a", "#8a4b6a")
+
+                        frame:
+                            background Solid("#ffffff")
+                            padding (12, 8)
+                            xsize 170
+                            yalign 0.5
+                            text t_name style "mod_label" xalign 0.5
+
+                        use mod_pill("▶", Function(mod_trust_cycle, 1), "#b5688a", "#8a4b6a")
+
+                        null width 6
+                        text (str(mm_get_trust(t_cid)) + " / 100") style "mod_label" yalign 0.5
+                        null width 6
+
+                        use mod_pill("+10", Function(mod_add_trust, 10))
+                        use mod_pill("-10", Function(mod_add_trust, -10), "#b5688a", "#8a4b6a")
+                        use mod_pill("Max", Function(mod_set_trust, 100))
+                        use mod_pill("Zero", Function(mod_set_trust, 0), "#b5688a", "#8a4b6a")
 
                 # ---- Rewind ----
                 vbox:
