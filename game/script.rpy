@@ -1,29 +1,29 @@
 ﻿default player_name = "YOU"
-default walk_style = ""
+default walk_style = "" # | Walk_style is voor een keuze later | #
+default intro_active = False
 define y = Character("[player_name!u]", color="#6b2d4a")
 define a = Character("ADRASTEA", color="#e0407f")
 
-# How long the credits slide stays on screen (seconds).
+# | CREDITS SLIDE DURATION (SECONDS) | #
 define credits_hold = 4.0
 
-# How long each intro image stays on screen (seconds).
-# Song is ~50s: credits (~7s) + 5 images x 8s (~40s) lines up well.
+# | INTRO IMAGE DURATION (SECONDS) | #
 define intro_hold = 4.5
 
-# | Backgrounds | #
+# | BACKGROUNDS | #
 image bg_Park_Wo_A = "images/Adrastea/Scenes/Park_without_Adrastea.png"
 
-# | Adrastea | #
+# | ADRASTEA | #
 image Adrastea_Park_Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
 
-# | Intro images (change these paths to your own files) | #
+# | INTRO IMAGES (CHANGE THESE PATHS TO YOUR OWN FILES) | #
 image intro_1 = "images/Intro/Background1.png"
 image intro_2 = "images/Intro/Background2.png"
 image intro_3 = "images/Intro/Background3.png"
 image intro_4 = "images/Intro/Background4.png"
 image intro_5 = "images/Intro/Background5.png"
 
-# | Transforms | #
+# | TRANSFORMS | #
 transform screen_shake:
     linear 0.05 xoffset 15 yoffset 10
     linear 0.05 xoffset -15 yoffset -10
@@ -55,7 +55,7 @@ transform adrastea_enter:
         easeout 0.4 xoffset 0
 
 
-# ---------- Credit text styles ----------
+# | CREDIT TEXT STYLES | #
 style mm_credit_title:
     font mm_title_font
     size 78
@@ -77,35 +77,36 @@ style mm_credit_small:
     kerning 2
 
 
-# ---------- Simple, pretty credits background ----------
+# | CREDITS BACKGROUND | #
 screen mm_credits_bg():
     zorder -10
 
-    # same soft gradient as the main menu
+    # | SOFT GRADIENT (SAME AS THE MAIN MENU) | #
     add mm_bg
 
-    # slow-pulsing soft glows for depth
+    # | SLOW-PULSING SOFT GLOWS | #
     text "●" size 900 color "#ffffff2a" at mm_glow(0.75, 0.25, 8.0)
     text "●" size 620 color "#ffd2b633" at mm_glow(0.25, 0.90, 10.0)
     text "●" size 480 color "#ffffff22" at mm_glow(0.10, 0.15, 9.0)
     text "●" size 700 color "#ffe3ee44" at mm_glow(0.92, 0.78, 11.0)
 
-    # sunrays from the top-right, very subtle
+    # | SUNRAYS FROM THE TOP-RIGHT | #
     for (rx, rw, rd) in mm_rays:
         add Solid("#ffffff22", xsize=rw, ysize=1500) at mm_ray(rx, rd)
 
-    # rising bubbles (already exist in MainMenu.rpy)
+    # | RISING BUBBLES (FROM MAINMENU.RPY) | #
     for (bx, bsize, bdelay, bdur, bcol) in mm_bubbles:
         text "●" size bsize color bcol at mm_float(bx, bdelay, bdur)
 
-    # drifting petals (already exist in MainMenu.rpy)
+    # | DRIFTING PETALS (FROM MAINMENU.RPY) | #
     for (ptx, ptx2, pty, ptdelay, ptdur, ptspin, ptglyph, ptsize, ptcol) in mm_petals:
         text ptglyph size ptsize color ptcol at mm_petal(ptx, ptx2, pty, ptdelay, ptdur, ptspin)
 
 
-# ---------- One credit "slide" ----------
+# | CREDIT SLIDE | #
 screen mm_credits_line(header, sub):
-    add Solid("#6b2d4a1a")   # faint plum wash to darken the centre a touch
+    # | FAINT PLUM WASH | #
+    add Solid("#6b2d4a1a")
 
     vbox:
         xalign 0.5
@@ -127,7 +128,7 @@ screen mm_credits_line(header, sub):
             add Solid("#c8567f99") xsize 160 ysize 3 yalign 0.5
 
 
-# ---------- Intro captions ----------
+# | INTRO CAPTIONS | #
 transform intro_cap_fade:
     on show:
         alpha 0.0
@@ -145,7 +146,7 @@ screen intro_caption(txt):
     fixed:
         at intro_cap_fade
 
-        # soft plum band so the text is readable on any image
+        # | SOFT PLUM BAND FOR READABLE TEXT | #
         add Solid("#3f1c3166") ysize 190 yalign 1.0
 
         text txt:
@@ -159,12 +160,11 @@ screen intro_caption(txt):
             outlines [(3, "#6b2d4a", 0, 0)]
 
 
-# ---------- Name screen (shown at the end of the intro) ----------
+# | NAME SCREEN (END OF INTRO) | #
 style intro_name_input is input:
-    font mm_title_font
-    size 62
-    color "#6b2d4a"
-    xalign 0.5
+    font "fonts/PatrickHand-Regular.ttf"
+    size 68
+    color "#e0407f"
 
 screen intro_name_input():
     modal True
@@ -172,43 +172,53 @@ screen intro_name_input():
 
     add Solid("#6b2d4a66")
 
-    frame:
+    fixed:
         xalign 0.5
         yalign 0.5
-        xsize 820
-        padding (50, 40)
-        background Solid("#fff3e8f2")
+        xysize (920, 560)
         at mm_fade_in(0.0)
+
+        add "gui/name_paper.png"
 
         vbox:
             xalign 0.5
-            spacing 24
+            yalign 0.5
+            yoffset 10
+            spacing 18
 
-            text "✿" size 40 color "#e0407f" xalign 0.5
-            text "What's your name?" font mm_title_font size 58 color "#6b2d4a" xalign 0.5
-
-            frame:
+            text "What's your name?":
+                font "fonts/PatrickHand-Regular.ttf"
+                size 72
+                color "#594632"
                 xalign 0.5
-                xsize 560
-                padding (24, 14)
-                background Solid("#ffffff")
+
+            # handwritten line instead of a white box
+            fixed:
+                xalign 0.5
+                xysize (560, 90)
                 input:
                     style "intro_name_input"
                     value VariableInputValue("player_name", returnable=True)
                     length 14
                     exclude "{}[]<>"
+                    xalign 0.5
+                    yalign 0.5
+                add Solid("#59463299") xsize 560 ysize 3 yalign 1.0
 
             textbutton _("Continue"):
-                style "mm_confirm_button"
                 xalign 0.5
                 sensitive player_name.strip() != ""
-                text_insensitive_color "#b5688a66"
                 action Return()
+                text_font "fonts/PatrickHand-Regular.ttf"
+                text_size 58
+                text_idle_color "#594632"
+                text_hover_color "#2878C8"
+                text_insensitive_color "#59463255"
 
             text "Type your name, then press Enter":
-                font mm_title_font
-                size 22
-                color "#8a4b6acc"
+                font "fonts/PatrickHand-Regular.ttf"
+                size 28
+                color "#8a6a5a"
                 xalign 0.5
 
 
@@ -218,29 +228,30 @@ label start:
     $ persistent.game_started = True
     $ renpy.save_persistent()
 
-    # Lock the intro: no skipping, no rolling back.
+    # | INTRO | #
     $ _skipping = False
     $ config.allow_skipping = False
     $ renpy.block_rollback()
+    $ intro_active = True
 
-    # 1. Start the intro song.
-    # play music "Music/Intro_Song.ogg" fadein 1.0 noloop volume 0.35 => remove "#" to fix sound
+    # | START THE INTRO SONG | #
+    # play music "Music/Intro_Song.ogg" fadein 2.0 noloop volume 0.25
 
-    # --- Short credits slide Intro ---
+    # | CREDITS SLIDE INTRO | #
     scene black with fade
     show screen mm_credits_bg
     with Dissolve(0.8)
 
     show screen mm_credits_line("{size=30}A GAME MADE BY{/size}", "ACTUALDYNAMICS STUDIO")
     with Dissolve(0.6)
-    $ renpy.pause(credits_hold, hard=True) # => credits_hold = 4 seconden
+    $ renpy.pause(credits_hold, hard=True) # | CREDITS_HOLD = 4 SECONDEN | #
     hide screen mm_credits_line
     with Dissolve(0.6)
 
     hide screen mm_credits_bg
     with Dissolve(0.8)
 
-    # --- Automatic image sequence with captions (can't be skipped) ---
+    # | AUTOMATIC IMAGE SEQUENCE WITH CAPTIONS (CAN'T BE SKIPPED) | #
     scene intro_1 with Dissolve(1.0)
     show screen intro_caption("A sunny morning in the park.\nThe kind of morning that rarely happens.")
     $ renpy.pause(intro_hold, hard=True)
@@ -263,39 +274,49 @@ label start:
 
     scene intro_5 with Dissolve(1.0)
     show screen intro_caption("Every story begins with a name...")
-    $ renpy.pause(2.0, hard=True)
+    $ renpy.pause(2.5, hard=True)
     hide screen intro_caption
 
-    # --- Choose your name (over the last intro image) ---
+label intro_choose_name:
+    hide screen mm_credits_line
+    hide screen mm_credits_bg
+    hide screen intro_caption
+    $ renpy.hide_screen("mod_menu")
+    $ renpy.pause(0.3, hard=True)
+    scene intro_5
+
+    # | CHOOSE YOUR NAME (OVER THE LAST INTRO IMAGE) | #
     $ player_name = ""
     while player_name == "":
+        $ intro_active = False
         call screen intro_name_input
         $ player_name = player_name.strip()
 
-    # Unlock skipping again for the actual game.
+    # | UNLOCK SKIPPING AGAIN FOR THE ACTUAL GAME | #
     $ config.allow_skipping = True
 
-    # --- Now the actual scene begins ---
+    # | NOW THE ACTUAL SCENE BEGINS | #
     scene bg_Park_Wo_A with fade
-    "[player_name]... a good name for a good day."
-    "The sun is out, the park is quiet, and you've got nowhere to be until later."
-    y "What a lovely day!"
+    "[player_name] Huh? What an interesting name..."
+    y "Ahhh what a lovely day!"
 
-    # A small flavour choice (no points)
+    # | A SMALL FLAVOUR CHOICE (NO POINTS) | #
     menu:
         "What are you doing on your walk?"
 
         "Listening to my favourite playlist":
             $ walk_style = "music"
             "You slip your earbuds in and let the music carry you along the path."
+            # | MUZIEK ADDEN ZODAT JE MUZIEK HOORT | #
 
         "Just enjoying the quiet":
             $ walk_style = "quiet"
             "You let the birds and the breeze be your soundtrack."
+            # | BIRDS SFX | #
 
     "You close your eyes for a second, smiling up at the sky and not looking where you're walking..."
 
-    # --- The bump (music stops here) ---
+    # | THE BUMP (MUSIC STOPS HERE) | #
     "*THUD*" with vpunch
     stop music fadeout 2.0
     pause 2.0
@@ -339,7 +360,7 @@ label start:
             a "Wow, there's no need to be so aggressive!"
             y "Sorry... I'm just not in the mood right now."
 
-    # --- Both choices come together here ---
+    # | BOTH CHOICES COME TOGETHER HERE | #
     a "...Anyway. I'm Adrastea."
     a "And you are?"
 
@@ -365,7 +386,7 @@ label start:
             a "Same. I came here to think."
             a "...Walk with me, then. Quietly."
 
-    # --- Next scene ---
+    # | NEXT SCENE | #
     # scene bg_Downtown with fade
     "To be continued..."
 

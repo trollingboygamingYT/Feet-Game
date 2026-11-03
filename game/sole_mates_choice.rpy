@@ -1,18 +1,19 @@
 init offset = 3
 
-transform mm_choice_in(delay=0.0):
+# ---------- Transforms ----------
+transform paper_choice_in(delay=0.0):
     on show, appear:
         alpha 0.0
-        xoffset 120
+        yoffset 20
         pause delay
         parallel:
-            ease 0.35 alpha 1.0
+            ease 0.3 alpha 1.0
         parallel:
-            easeout_back 0.45 xoffset 0
+            ease 0.3 yoffset 0
     on hover:
-        ease 0.15 xoffset -14
+        ease 0.12 xoffset 10
     on idle:
-        ease 0.2 xoffset 0
+        ease 0.15 xoffset 0
 
 transform fp_pop:
     alpha 0.0
@@ -30,14 +31,8 @@ transform fp_pop:
     parallel:
         ease 0.5 yoffset -40
 
-style mm_choice_menu_button is empty:
-    xsize 1000
-    ysize 92
-    xpadding 40
-    background Solid("#fff3e8ee")
-    hover_background Solid("#ffd9e6")
-    insensitive_background Solid("#e6e6e6cc")
 
+# ---------- Styles ----------
 style mm_choice_menu_text:
     font mm_title_font
     size 38
@@ -48,11 +43,6 @@ style mm_choice_menu_text:
     hover_outlines [(4, "#ffffff", 0, 0)]
     yalign 0.5
 
-style mm_choice_menu_vbox:
-    xalign 0.5
-    yalign 0.42
-    spacing 22
-
 style mm_fp_popup_text:
     font mm_title_font
     size 44
@@ -60,25 +50,34 @@ style mm_fp_popup_text:
     color mm_color_dark
     outlines [(3, "#ffffff", 0, 0)]
 
+
+# ---------- Choice screen: one paper per option ----------
 screen choice(items):
     key "mod_menu" action Show("mod_menu")
-    add Solid("#6b2d4a44")
 
     vbox:
-        style "mm_choice_menu_vbox"
+        xalign 0.5
+        yanchor 1.0
+        ypos 0.60                    # bottom of the options (0.0 = top, 1.0 = bottom)
+        spacing 6                    # gap between the papers
+
         for i, item in enumerate(items):
             button:
-                style "mm_choice_menu_button"
+                xysize (1100, 126)
+                background "gui/choice_paper.png"
+                hover_background "gui/choice_paper_hover.png"
+                insensitive_background "gui/choice_paper.png"
                 action item.action
-                at mm_choice_in(i * 0.12)
-                hover_sound None
-                add Solid("#e0407f") xsize 8 ysize 92 xpos -40 ypos 0
-                hbox:
-                    spacing 22
-                    yalign 0.5
-                    text "✿" size 34 color "#e0407f" yalign 0.5
-                    text item.caption style "mm_choice_menu_text"
+                at paper_choice_in(i * 0.12)
 
+                hbox:
+                    xpos 80
+                    yalign 0.5
+                    spacing 22
+                    text item.caption style "mm_choice_menu_text" xmaximum 840
+
+
+# ---------- Feet Point popup ----------
 screen fp_popup(amount=1):
     modal True
     zorder 150
@@ -95,8 +94,9 @@ screen fp_popup(amount=1):
             text "+[amount] Feet Point" style "mm_fp_popup_text" yalign 0.5
     timer 2.8 action Hide("fp_popup")
 
+
+# ---------- Character unlocked popup ----------
 screen mm_unlock_popup(cname):
-    modal True
     zorder 160
     frame:
         xalign 0.5
@@ -111,24 +111,7 @@ screen mm_unlock_popup(cname):
             text "Unlocked: [cname]!" style "mm_fp_popup_text" color "#c8567f" yalign 0.5
     timer 2.8 action Hide("mm_unlock_popup")
 
-screen mm_unlock_popup(cname):
-    zorder 160
-    frame:
-        xalign 0.5
-        ypos 100
-        padding (40, 20)
-        background Solid("#fff3e8f2")
-        at fp_pop
-        hbox:
-            spacing 18
-            yalign 0.5
-            text "✦" size 44 color "#e6b800" bold True yalign 0.5
-            text "Unlocked: [cname]!" style "mm_fp_popup_text" color "#c8567f" yalign 0.5
-    timer 2.8 action Hide("mm_unlock_popup")
 
 init python:
-    def mm_show_status(name, status):
-        renpy.show_screen("mm_status_popup", name=name, status=status)
-
     def mm_show_unlock(name):
         renpy.show_screen("mm_unlock_popup", cname=name)

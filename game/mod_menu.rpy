@@ -340,6 +340,12 @@ screen mod_menu():
                         use mod_pill(_("◀◀  Rewind"), Function(mod_do_rollback))
 
                     text _("Click the box to type a number (max 100). Only works in-game.") style "mod_hint"
+                                    # ---- Intro (only while the intro is playing) ----
+                if intro_active:
+                    vbox:
+                        spacing 10
+                        text _("Intro") style "mod_section"
+                        use mod_pill(_("Skip Intro  >>"), [Hide("mod_menu"), Jump("intro_choose_name")])
 
                 # ---- Danger zone + close ----
                 add Solid("#c8567f55") xsize 860 ysize 2
