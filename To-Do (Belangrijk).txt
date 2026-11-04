@@ -16,6 +16,9 @@ To-Do
 
 - Where there are 2 characters light the one who's talking up
 
+
+- you can choose the scene like a store or a clothing shop, ... interactive
+
 Game Design:
 Story game met 1ste character goddess vermomd als een normaal persoon ook de scene (aarde) voor foto's te unlocken verschillende minigames (clicker, iets anders) dan verder story
 
