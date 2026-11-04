@@ -27,9 +27,9 @@ screen pause_menu():
     tag menu
     modal True
 
-    # pause music while this menu is open, resume when closed
-    on "show" action PauseAudio("music", True)
-    on "hide" action PauseAudio("music", False)
+    # pause all audio channels while this menu is open, resume when closed
+    on "show" action Function(mm_pause_all_audio, True)
+    on "hide" action Function(mm_pause_all_audio, False)
 
     key "game_menu" action Return()
 
@@ -99,3 +99,16 @@ screen mm_pause_button(label, act):
         hover_sound None
 
         text label style "mm_nav_text" xalign 0.5 yalign 0.5
+        
+init python:
+    def mm_pause_all_audio(paused):
+        """
+        Pause or resume every audio channel that can be paused.
+        Works for music, sound, voice, and any custom channels.
+        """
+        for channel in ("music", "sound", "voice", "audio"):
+            try:
+                renpy.music.set_pause(paused, channel=channel)
+            except Exception:
+                # channel doesn't exist in this project — skip it
+                pass

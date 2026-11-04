@@ -347,7 +347,7 @@ label intro_choose_name:
     
     # Lock the game for exactly 20 seconds
     $ config.allow_skipping = False
-    $ renpy.pause(20.0, hard=True)
+    $ renpy.pause(3.0, hard=True) # veranderen naar 20 seconds
     
     # | THE BUMP (AUDIO STOPS HERE) | #
     stop sound
@@ -355,10 +355,10 @@ label intro_choose_name:
     play sound "Music/SFX/Thud_SFX.ogg"
     "*THUD*" with vpunch
 
-    "You snap out of the moment. You look up and..."
+    "You snap out of the moment. And you look up and you see..."
     show Adrastea_Park_Annoyed at adrastea_enter with dissolve
     "You bumped into a girl!"
-    a "Oh, watch where you're going!"
+    a "Hey, watch where you're going weirdo!"
 
     menu:
         y "What should I reply?"

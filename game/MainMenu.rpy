@@ -1054,7 +1054,11 @@ screen mm_choice(lbl, act):
 # ---------- The frame every menu page lives in ----------
 screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
     style_prefix "game_menu"
-    key "mod_menu" action Show("mod_menu")   # <--- Add this if it's missing
+    key "mod_menu" action Show("mod_menu")
+
+    # pause all audio while ANY game menu is open
+    on "show" action Function(mm_pause_all_audio, True)
+    on "hide" action Function(mm_pause_all_audio, False)
 
     # backdrop (same as the main menu)
     add mm_bg
