@@ -1,0 +1,6 @@
+Keywords Adrastea:
+adrastea_char
+frea_ch
+dawn_ch --> normaal
+dawn_dragon_ch --> dragon form
+voor dawn dragon form: dawn_ch, dawn_dragon_ch
