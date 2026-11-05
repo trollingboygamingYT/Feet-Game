@@ -356,7 +356,7 @@ label intro_choose_name:
     play sound "Music/SFX/Thud_SFX.ogg"
     "*THUD*" with vpunch
 
-    "You snap out of the moment. And you look up and you see..."
+    "You snap out of the moment. You look up and see..."
     show Adrastea_Park_Annoyed at adrastea_enter with dissolve
     "You bumped into a girl!"
     a "Hey, watch where you're going weirdo!"
