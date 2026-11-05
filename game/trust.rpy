@@ -1,4 +1,3 @@
-default mm_awarded = set()
 default persistent.mm_awarded_saves = {}
 default mm_playthrough_id = None
 init offset = 4
@@ -74,15 +73,6 @@ init python:
                 if c[0] == cid:
                     cname = c[1]
             mm_show_trust(cname, old, new)
-
-    def mm_award_once(key, fn):
-        """Run fn() only the first time this key is used in this playthrough."""
-        if key in mm_awarded:
-            return False
-        mm_awarded.add(key)
-        fn()
-        return True
-
 
 style mm_trust_text:
     font gui.text_font

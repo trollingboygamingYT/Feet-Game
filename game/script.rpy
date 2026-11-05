@@ -330,12 +330,12 @@ label intro_choose_name:
                 "The Handsome Family - Far From Any Road":
                     play music Music[2] fadein 1.0 volume 0.15
 
-            "You slip your earbuds in and let the music carry you along the path."
+            "You slip your earbuds in and let the music carry you along the path. {w=1.0}{nw}"
 
         "Just enjoying the quiet":
             $ walk_style = "quiet"
             play sound "Music/SFX/Nature_SFX.ogg" fadein 1.0 volume 0.6
-            "You let the birds and the breeze be your soundtrack."
+            "You let the birds and the breeze be your soundtrack. {w=1.0}{nw}"
             
             # Tiny 0.1 second pause to let the menu close
             $ renpy.pause(0.1, hard=True) 
@@ -367,7 +367,7 @@ label intro_choose_name:
         "I'm so sorry, I didn't see you there!":
 
             if mm_award_once("bump_sorry_fp", lambda: mm_add_fp(1)):
-                show screen fp_popup(1)
+                $ mm_show_fp(1)
                 pause 2.8
 
             if not mm_is_unlocked("char_1"):

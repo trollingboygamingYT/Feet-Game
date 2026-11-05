@@ -8,48 +8,28 @@
 init offset = 5
 
 # ---------- Easy knobs ----------
-define mm_toast_life   = 3.6      # seconds a card stays fully visible
-define mm_toast_w      = 480
-define mm_toast_xgap   = 40
-define mm_toast_ytop   = 40
-define mm_toast_space  = 14
-define mm_toast_bar_w  = mm_toast_w - 70
+define mm_toast_life   = 3.8      # seconds a card stays visible
+define mm_toast_w      = 440
+define mm_toast_xgap   = 32
+define mm_toast_ytop   = 32
+define mm_toast_space  = 12
+define mm_toast_bar_w  = mm_toast_w - 64
 
 
 # ---------- Animations ----------
 transform mm_toast_slide:
     on show, appear:
         alpha 0.0
-        xoffset 160
+        xoffset 48
         parallel:
-            ease 0.25 alpha 1.0
+            ease 0.22 alpha 1.0
         parallel:
-            easeout_back 0.55 xoffset 0
+            easeout 0.3 xoffset 0
     on hide:
         parallel:
-            ease 0.35 alpha 0.0
+            ease 0.22 alpha 0.0
         parallel:
-            easein 0.35 xoffset 100
-
-transform mm_toast_shake:
-    on show, appear:
-        alpha 0.0
-        xoffset 160
-        parallel:
-            ease 0.2 alpha 1.0
-        parallel:
-            easeout_back 0.4 xoffset 0
-        linear 0.05 xoffset 16
-        linear 0.05 xoffset -16
-        linear 0.05 xoffset 10
-        linear 0.05 xoffset -10
-        linear 0.05 xoffset 4
-        linear 0.05 xoffset 0
-    on hide:
-        parallel:
-            ease 0.35 alpha 0.0
-        parallel:
-            easein 0.35 xoffset 100
+            easein 0.22 xoffset 28
 
 transform mm_toast_countdown(d):
     xpos 0
@@ -57,41 +37,31 @@ transform mm_toast_countdown(d):
     xzoom 1.0
     linear d xzoom 0.0
 
-transform mm_toast_badge:
-    zoom 1.0
-    block:
-        ease 0.8 zoom 1.12
-        ease 0.8 zoom 1.0
-        repeat
-
-
 # ---------- Styles ----------
 style mm_toast_caption:
     font mm_title_font
-    size 16
+    size 14
     bold True
-    color mm_color_soft
-    kerning 3
+    color "#895e70"
+    kerning 2
 
 style mm_toast_title:
     font mm_title_font
-    size 36
+    size 30
     bold True
-    color mm_color_dark
-    outlines [(2, "#ffffff", 0, 0)]
+    color "#4a2439"
 
 style mm_toast_big:
     font mm_title_font
-    size 54
+    size 44
     bold True
-    color mm_color_dark
-    outlines [(2, "#ffffff", 0, 0)]
+    color "#4a2439"
 
 style mm_toast_small:
     font mm_title_font
-    size 21
+    size 18
     bold True
-    color mm_color_soft
+    color "#895e70"
 
 
 # ---------- State ----------
@@ -117,9 +87,20 @@ init python:
     mm_toasts = MMToasts()
 
     def mm_toast_push(kind, **data):
+        data["expires_at"] = time.monotonic() + mm_toast_life
         mm_toasts.push(kind, **data)
         renpy.show_screen("mm_toast_stack")
         renpy.restart_interaction()
+
+    def mm_toast_prune():
+        now = time.monotonic()
+        active = [item for item in mm_toasts.items if item["expires_at"] > now]
+
+        if len(active) != len(mm_toasts.items):
+            mm_toasts.items = active
+            if not active:
+                renpy.hide_screen("mm_toast_stack")
+            renpy.restart_interaction()
 
     def mm_toast_dismiss(toast_id):
         mm_toasts.remove(toast_id)
@@ -139,17 +120,17 @@ init python:
 
 
 # ---------- Shared card shell ----------
-screen mm_toast_shell(accent="#e0407f", bg="#fff3e8", bad=False):
+screen mm_toast_shell(accent="#c8567f", bg="#fff7fa"):
     frame:
-        at (mm_toast_shake if bad else mm_toast_slide)
+        at mm_toast_slide
         xsize mm_toast_w
-        background Solid("#6b2d4a24")
-        padding (0, 0, 6, 8)
+        background Solid("#4a24392a")
+        padding (0, 0, 4, 6)
 
         frame:
             xfill True
-            background Solid("#ffffff")
-            padding (3, 3)
+            background Solid("#fffdfd")
+            padding (1, 1)
 
             vbox:
                 spacing 0
@@ -157,46 +138,46 @@ screen mm_toast_shell(accent="#e0407f", bg="#fff3e8", bad=False):
 
                 frame:
                     xfill True
-                    background Fixed(Solid(bg), Solid(accent, xsize=10))
-                    padding (34, 18, 24, 18)
+                    background Fixed(Solid(bg), Solid(accent, xsize=6))
+                    padding (24, 16, 20, 16)
                     transclude
 
-                add Solid(accent) ysize 4 xsize mm_toast_w at mm_toast_countdown(mm_toast_life)
+                add Solid(accent) ysize 3 xsize mm_toast_w at mm_toast_countdown(mm_toast_life)
 
 
 # ---------- Character unlocked ----------
 screen mm_toast_unlock(d):
-    use mm_toast_shell("#e0407f"):
+    use mm_toast_shell():
         hbox:
-            spacing 22
+            spacing 18
             yalign 0.5
 
             fixed:
-                xysize (76, 76)
+                xysize (64, 64)
                 yalign 0.5
-                add Solid("#fff0c2")
-                text u"✦" size 46 color "#e6b800" xalign 0.5 yalign 0.5 at mm_toast_badge
+                add Solid("#fce9f0")
+                text u"✦" size 38 color "#c8567f" xalign 0.5 yalign 0.5
 
             vbox:
                 yalign 0.5
-                spacing 0
+                spacing 2
                 text "CHARACTER UNLOCKED" style "mm_toast_caption"
-                text d["name"] style "mm_toast_title" color "#c8567f" xmaximum 320
+                text d["name"] style "mm_toast_title" xmaximum 300
 
 
 # ---------- Feet Points ----------
 screen mm_toast_fp(d):
-    use mm_toast_shell("#e0407f"):
+    use mm_toast_shell():
         hbox:
             xfill True
             yalign 0.5
 
             hbox:
-                spacing 20
+                spacing 14
                 yalign 0.5
                 add Fp_icon yalign 0.5
                 vbox:
-                    spacing -6
+                    spacing -4
                     yalign 0.5
                     text "FEET POINTS" style "mm_toast_caption"
                     $ amt = d["amount"]
@@ -205,7 +186,7 @@ screen mm_toast_fp(d):
             vbox:
                 xalign 1.0
                 yalign 0.5
-                spacing -2
+                spacing 0
                 text "TOTAL" style "mm_toast_caption" xalign 1.0
                 text str(d["total"]) style "mm_toast_title" xalign 1.0
 
@@ -214,18 +195,18 @@ screen mm_toast_fp(d):
 screen mm_toast_bar(old, new, w, col):
     fixed:
         xsize w
-        ysize 20
+        ysize 10
         add Solid("#6b2d4a26")
         bar:
             value AnimatedValue(value=new, range=100, delay=1.2, old_value=old)
             xsize w
-            ysize 20
+            ysize 10
             left_bar Solid(col)
             right_bar Solid("#00000000")
             thumb None
             thumb_shadow None
         for q in (0.25, 0.5, 0.75):
-            add Solid("#ffffff99") xpos int(w * q) xsize 2 ysize 20
+                add Solid("#ffffff99") xpos int(w * q) xsize 2 ysize 10
 
 screen mm_toast_trust(d):
     $ diff = d["new"] - d["old"]
@@ -233,10 +214,10 @@ screen mm_toast_trust(d):
     $ col = "#d6153a" if bad else "#e0407f"
     $ delta = ("+" if diff > 0 else ("-" if diff < 0 else u"±")) + str(abs(diff))
 
-    use mm_toast_shell(col, ("#ffd7e6" if bad else "#fff3e8"), bad):
+    use mm_toast_shell(col, ("#fff1f4" if bad else "#fff7fa")):
         vbox:
             xfill True
-            spacing 10
+            spacing 8
 
             hbox:
                 xfill True
@@ -261,9 +242,6 @@ screen mm_toast_entry(d):
     $ _kind = d["kind"]
 
     vbox:
-        # a per-card timer, removed the moment this entry unmounts
-        timer (mm_toast_life + 0.3) action Function(mm_toast_dismiss, _tid)
-
         if _kind == "unlock":
             use mm_toast_unlock(d)
         elif _kind == "fp":
@@ -275,6 +253,7 @@ screen mm_toast_entry(d):
 # ---------- The stack ----------
 screen mm_toast_stack():
     zorder 160
+    timer 0.1 repeat True action Function(mm_toast_prune)
 
     vbox:
         xalign 1.0
