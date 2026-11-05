@@ -1,0 +1,10 @@
+Image type	Amount
+Face close-ups	10
+Upper body	10
+Full body	10
+Different poses	8
+Different facial expressions	5
+Different angles	4
+Hands and feet visible	3
+
+40–60	Recommended
