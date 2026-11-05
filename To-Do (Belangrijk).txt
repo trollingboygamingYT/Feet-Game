@@ -1,8 +1,10 @@
 To-Do
 -------
-- images veranderen in videos
 
-- quick menu als GUI veranderen (ESC)
+Game Design:
+Story game met 1ste character goddess vermomd als een normaal persoon ook de scene (aarde) voor foto's te unlocken verschillende minigames (clicker, iets anders) dan verder story
+
+- images veranderen in videos
 
 - 2 stories 1 anime 1 photorealistic
 
@@ -22,9 +24,5 @@ To-Do
 
 - civitai Red detailer models (detection filter)
 
-- fix when getting feet points or trust then going back to menu and then continueing you get extra fix this.
-
-Game Design:
-Story game met 1ste character goddess vermomd als een normaal persoon ook de scene (aarde) voor foto's te unlocken verschillende minigames (clicker, iets anders) dan verder story
 
 

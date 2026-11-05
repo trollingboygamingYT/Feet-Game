@@ -233,7 +233,7 @@ screen music_stop_timer():
     timer 26.0 action [Stop("music", fadeout=2.0), Hide("music_stop_timer")]
 
 
-label start:
+label main_story:
 
     $ mm_reset_progress()
     $ mm_new_playthrough_id()      # <-- add this line
