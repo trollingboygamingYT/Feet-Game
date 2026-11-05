@@ -76,42 +76,4 @@ screen choice(items):
                     spacing 22
                     text item.caption style "mm_choice_menu_text" xmaximum 840
 
-
-# ---------- Feet Point popup ----------
-screen fp_popup(amount=1):
-    modal True
-    zorder 150
-    frame:
-        xalign 0.5
-        ypos 120
-        padding (36, 18)
-        background Solid("#fff3e8f2")
-        at fp_pop
-        hbox:
-            spacing 18
-            yalign 0.5
-            add Fp_icon yalign 0.5
-            text "+[amount] Feet Point" style "mm_fp_popup_text" yalign 0.5
-    timer 2.8 action Hide("fp_popup")
-
-
-# ---------- Character unlocked popup ----------
-screen mm_unlock_popup(cname):
-    zorder 160
-    frame:
-        xalign 0.5
-        ypos 100
-        padding (40, 20)
-        background Solid("#fff3e8f2")
-        at fp_pop
-        hbox:
-            spacing 18
-            yalign 0.5
-            text "✦" size 44 color "#e6b800" bold True yalign 0.5
-            text "Unlocked: [cname]!" style "mm_fp_popup_text" color "#c8567f" yalign 0.5
-    timer 2.8 action Hide("mm_unlock_popup")
-
-
-init python:
-    def mm_show_unlock(name):
-        renpy.show_screen("mm_unlock_popup", cname=name)
+# NOTE: the Feet Point / Unlocked / Trust popups now live in sole_mates_toasts.rpy

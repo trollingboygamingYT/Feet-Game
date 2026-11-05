@@ -1,3 +1,6 @@
+default mm_awarded = set()
+default persistent.mm_awarded_saves = {}
+default mm_playthrough_id = None
 init offset = 4
 
 # ---------- Trust system ----------
@@ -7,6 +10,42 @@ define mm_trust_start = 20      # trust every character starts with
 define mm_trust_max   = 100
 
 init python:
+
+    import uuid
+
+    def mm_new_playthrough_id():
+        """Call this ONCE at the start of a fresh playthrough (e.g. in label start
+        after mm_reset_progress). Gives this save-file a unique token so
+        'one-time' rewards can fire once per playthrough without exploits."""
+        pid = str(uuid.uuid4())
+        store.mm_playthrough_id = pid
+        persistent.mm_awarded_saves = dict(persistent.mm_awarded_saves or {})
+        persistent.mm_awarded_saves[pid] = []
+        renpy.save_persistent()
+
+    def mm_award_once(key, fn):
+        """Run fn() only the first time this (playthrough_id, key) pair is used.
+        Safe against Main Menu → Continue exploits because the record lives in
+        persistent, keyed by the save file's playthrough token."""
+        pid = getattr(store, "mm_playthrough_id", None)
+        if pid is None:
+            # no playthrough id (shouldn't happen in normal flow) — fall back
+            fn()
+            return True
+
+        awarded = persistent.mm_awarded_saves or {}
+        done = set(awarded.get(pid, []))
+
+        if key in done:
+            return False
+
+        fn()
+        done.add(key)
+        awarded = dict(awarded)
+        awarded[pid] = list(done)
+        persistent.mm_awarded_saves = awarded
+        renpy.save_persistent()
+        return True
 
     def mm_get_trust(cid):
         return (persistent.mm_trust or {}).get(cid, mm_trust_start)
@@ -34,7 +73,15 @@ init python:
             for c in mm_characters:
                 if c[0] == cid:
                     cname = c[1]
-            renpy.show_screen("mm_trust_popup", cname=cname, old=old, new=new)
+            mm_show_trust(cname, old, new)
+
+    def mm_award_once(key, fn):
+        """Run fn() only the first time this key is used in this playthrough."""
+        if key in mm_awarded:
+            return False
+        mm_awarded.add(key)
+        fn()
+        return True
 
 
 style mm_trust_text:
@@ -59,29 +106,3 @@ screen mm_trust_bar(old, new, w=460):
             right_bar Solid("#00000000")
             thumb None
             thumb_shadow None
-
-
-# Popup shown in-game, same style as the Feet Point popup
-screen mm_trust_popup(cname, old, new):
-    zorder 155
-    $ diff = new - old
-    $ delta = ("+" if diff > 0 else "") + str(diff)
-
-    frame:
-        xalign 0.5
-        ypos 120
-        padding (40, 22)
-        background Solid("#fff3e8f2")
-        at fp_pop
-
-        vbox:
-            spacing 12
-            xsize 520
-            hbox:
-                xfill True
-                text "✿ Trust: [cname]" style "mm_trust_text"
-                text "[delta]" style "mm_trust_text" xalign 1.0 color ("#3aa66b" if diff >= 0 else "#c01818")
-            use mm_trust_bar(old, new, 520)
-            text "[new] / 100" style "mm_trust_text" size 22 color "#b5688a"
-
-    timer 2.8 action Hide("mm_trust_popup")

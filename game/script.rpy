@@ -236,6 +236,7 @@ screen music_stop_timer():
 label start:
 
     $ mm_reset_progress()
+    $ mm_new_playthrough_id()      # <-- add this line
     $ persistent.game_started = True
     $ renpy.save_persistent()
 
@@ -365,17 +366,17 @@ label intro_choose_name:
 
         "I'm so sorry, I didn't see you there!":
 
-            $ mm_add_fp(1)
-            show screen fp_popup(1)
-            pause 2.8
+            if mm_award_once("bump_sorry_fp", lambda: mm_add_fp(1)):
+                show screen fp_popup(1)
+                pause 2.8
 
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
                 pause 2.8
 
-            $ mm_give_trust("char_1", 10)
-            pause 2.8
+            if mm_award_once("bump_sorry_trust", lambda: mm_give_trust("char_1", 10)):
+                pause 2.8
 
             a "...That's alright. Just be more careful next time."
 
@@ -388,8 +389,8 @@ label intro_choose_name:
 
             "You made her angry. No Feet Points this time."
 
-            $ mm_give_trust("char_1", -10)
-            pause 2.8
+            if mm_award_once("bump_angry_trust", lambda: mm_give_trust("char_1", -10)):
+                pause 2.8
 
             a "Wow, there's no need to be so aggressive!"
             y "Sorry... I'm just not in the mood right now."
@@ -411,8 +412,8 @@ label intro_choose_name:
         a "So, where were you off to?"
 
         "Downtown, want to come with me?":
-            $ mm_give_trust("char_1", 5)
-            pause 2.8
+            if mm_award_once("walk_downtown_trust", lambda: mm_give_trust("char_1", 5)):
+                pause 2.8
             a "Hm. You're bold, I'll give you that."
             a "Fine. But you're buying the first drink."
 
