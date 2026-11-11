@@ -7,6 +7,8 @@ define Music = [
     "Music/Music_Choice/Song3.ogg"
 
 ]
+default Music_choice = []
+
 define y = Character("[player_name!u]", color="#6b2d4a")
 define adrastea_unknown = Character("???", color="#e0407f")
 define adrastea = Character("Adrastea", color="#e0407f")
@@ -19,6 +21,7 @@ define intro_hold = 4.5
 
 # | BACKGROUNDS | #
 image bg_Park_Wo_A = "images/Adrastea/Scenes/Park_without_Adrastea.png"
+image Placeholder = "images/Backgrounds/Placeholder.jpg"
 
 # | ADRASTEA | #
 image Adrastea Park Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
@@ -328,10 +331,15 @@ label intro_choose_name:
                 "Which song do you want to listen to?"
 
                 "Crowded House - Dont Dream Its Over":
+                    $ Music_choice = [0]
                     play music Music[0] fadein 1.0 volume 0.15
+
                 "Cass Elliot - Make Your Own Kind Of Music":
+                    $ Music_choice = [1]
                     play music Music[1] fadein 1.0 volume 0.15
+
                 "The Handsome Family - Far From Any Road":
+                    $ Music_choice = [2]
                     play music Music[2] fadein 1.0 volume 0.15
 
             "You slip your earbuds in and let the music carry you along the path. {w=1.0}{nw}"
@@ -391,47 +399,49 @@ label intro_choose_name:
             show Adrastea Park Shy with Dissolve(0.15)
             y "Uhh yeah, i guess it is."
 
-
-
-
-
-
         "Hey, never touch me again!":
             show Adrastea Park Furious with Dissolve(0.15) # Fade op character image switch
 
-            "You made her angry. No Feet Points this time."
+            adrastea_unknown "Well if you look where you were going maybe this wouldn't have happened!"
 
             if mm_award_once("bump_angry_trust", lambda: mm_give_trust("char_1", -10)):
                 pause 2.8
 
-            adrastea_unknown "Wow, there's no need to be so aggressive!"
-            y "Sorry... I'm just not in the mood right now."
+            y "Yeah you're right, I'm sorry. I should have been more careful."
+            show Adrastea Park Annoyed with Dissolve(0.15)
+            adrastea_unknown "Hmph. Just be more careful next time."
+            y "Okay, I will. i'll go now, i'll see you around."
+            scene Placeholder with Fade(0.5, 0.3, 0.5)
+            y "This is a placeholder."
 
-    # | BOTH CHOICES COME TOGETHER HERE | #
-    adrastea_known "...Anyway. I'm Adrastea."
-    adrastea_known "And you are?"
-
-    y "I'm [player_name]."
-
-    adrastea_known "[player_name]... Alright. Not the worst way to meet someone."
-
+    # | BASED ON THE WALK STYLE CHOICE, ADRASTEA WILL COMMENT ON IT | #
     if walk_style == "music":
-        adrastea_known "Next time, maybe take one earbud out. You almost took me down."
-    else:
-        adrastea_known "You really weren't looking where you were going, were you?"
+        adrastea "So... What music where you listening to?"
+        if Music_choice == [0]:
+            y "I was listening to Crowded House - Don't Dream It's Over."
+            adrastea "Oh, Don't Dream It's Over! I love that song!"
+        elif Music_choice == [1]:
+            y "I was listening to Cass Elliot - Make Your Own Kind Of Music."
+            adrastea "Oh, Make Your Own Kind Of Music! I love that song!"
+        elif Music_choice == [2]:
+            y "I was listening to The Handsome Family - Far From Any Road."
+            adrastea "Oh, Far From Any Road! I love that song!"
+    elif walk_style == "quiet":
+        adrastea "You really weren't looking where you were going, were you?"
+        y "No, I was with my head in the sky, enjoying the quiet."
 
     menu:
-        adrastea_known "So, where were you off to?"
+        adrastea "So, where were you off to?"
 
         "Downtown, want to come with me?":
             if mm_award_once("walk_downtown_trust", lambda: mm_give_trust("char_1", 5)):
                 pause 2.8
-            adrastea_known "Hm. You're bold, I'll give you that."
-            adrastea_known "Fine. But you're buying the first drink."
+            adrastea "Hm. You're bold, I'll give you that."
+            adrastea "Fine. But you're buying the first drink."
 
         "Nowhere special, just walking.":
-            adrastea_known "Same. I came here to think."
-            adrastea_known "...Walk with me, then. Quietly."
+            adrastea "Same. I came here to think."
+            adrastea "...Walk with me, then. Quietly."
 
     # | NEXT SCENE | #
     # scene bg_Downtown with fade
