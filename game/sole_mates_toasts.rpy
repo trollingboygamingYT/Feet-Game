@@ -17,19 +17,20 @@ define mm_toast_bar_w  = mm_toast_w - 64
 
 
 # ---------- Animations ----------
-transform mm_toast_slide:
+transform mm_toast_slide(delay=0.0):
     on show, appear:
         alpha 0.0
-        xoffset 48
+        xoffset 260
+        pause delay
         parallel:
-            ease 0.22 alpha 1.0
+            ease 0.35 alpha 1.0
         parallel:
-            easeout 0.3 xoffset 0
+            easeout 0.45 xoffset 0
     on hide:
         parallel:
-            ease 0.22 alpha 0.0
+            ease 0.25 alpha 0.0
         parallel:
-            easein 0.22 xoffset 28
+            easein 0.25 xoffset 260
 
 transform mm_toast_countdown(d):
     xpos 0
@@ -86,8 +87,20 @@ init python:
 
     mm_toasts = MMToasts()
 
+    mm_toast_burst_last = [0.0]     # mutable holder so no 'global' needed
+
     def mm_toast_push(kind, **data):
-        data["expires_at"] = time.monotonic() + mm_toast_life
+        now = time.monotonic()
+
+        # if this push is close to the previous one, treat it as the same burst
+        if now - mm_toast_burst_last[0] < 0.35:
+            data["burst_index"] = data.get("burst_index", 0) or 0
+            data["burst_index"] += 1
+        else:
+            data["burst_index"] = 0
+
+        mm_toast_burst_last[0] = now
+        data["expires_at"] = now + mm_toast_life
         mm_toasts.push(kind, **data)
         renpy.show_screen("mm_toast_stack")
         renpy.restart_interaction()
@@ -120,9 +133,9 @@ init python:
 
 
 # ---------- Shared card shell ----------
-screen mm_toast_shell(accent="#c8567f", bg="#fff7fa"):
+screen mm_toast_shell(accent="#c8567f", bg="#fff7fa", delay=0.0):
     frame:
-        at mm_toast_slide
+        at mm_toast_slide(delay)
         xsize mm_toast_w
         background Solid("#4a24392a")
         padding (0, 0, 4, 6)
@@ -147,7 +160,7 @@ screen mm_toast_shell(accent="#c8567f", bg="#fff7fa"):
 
 # ---------- Character unlocked ----------
 screen mm_toast_unlock(d):
-    use mm_toast_shell():
+    use mm_toast_shell(delay=(d.get("burst_index", 0) * 0.12)):
         hbox:
             spacing 18
             yalign 0.5
@@ -167,7 +180,7 @@ screen mm_toast_unlock(d):
 
 # ---------- Feet Points ----------
 screen mm_toast_fp(d):
-    use mm_toast_shell():
+    use mm_toast_shell(delay=(d.get("burst_index", 0) * 0.12)):
         hbox:
             xfill True
             yalign 0.5
@@ -214,7 +227,7 @@ screen mm_toast_trust(d):
     $ col = "#d6153a" if bad else "#e0407f"
     $ delta = ("+" if diff > 0 else ("-" if diff < 0 else u"±")) + str(abs(diff))
 
-    use mm_toast_shell(col, ("#fff1f4" if bad else "#fff7fa")):
+    use mm_toast_shell(col, ("#fff1f4" if bad else "#fff7fa"), delay=(d.get("burst_index", 0) * 0.12)):
         vbox:
             xfill True
             spacing 8
@@ -262,8 +275,7 @@ screen mm_toast_stack():
         spacing mm_toast_space
         xsize mm_toast_w
 
-        # iterate a SNAPSHOT of the list, so mutation during build is safe
-        for d in list(mm_toasts.items):
+        for d in reversed(list(mm_toasts.items)):    # <-- reversed()
             use mm_toast_entry(d)
 
 

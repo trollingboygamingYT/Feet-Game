@@ -68,11 +68,20 @@ init python:
         mm_set_trust(cid, old + n)
         new = mm_get_trust(cid)
         if popup:
-            cname = cid
-            for c in mm_characters:
-                if c[0] == cid:
-                    cname = c[1]
-            mm_show_trust(cname, old, new)
+            mm_show_trust(mm_display_name(cid), old, new)
+
+
+    def mm_display_name(cid):
+        """Return the name to show in toasts/popups.
+        Real name if unlocked, '???' otherwise."""
+        # mm_is_unlocked lives in MainMenu.rpy — safe to call here because
+        # everything is init-time python and both files are loaded.
+        if not mm_is_unlocked(cid):
+            return "???"
+        for c in mm_characters:
+            if c[0] == cid:
+                return c[1]
+        return cid
 
 style mm_trust_text:
     font gui.text_font

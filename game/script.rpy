@@ -8,7 +8,8 @@ define Music = [
 
 ]
 define y = Character("[player_name!u]", color="#6b2d4a")
-define a = Character("ADRASTEA", color="#e0407f")
+define adrastea_unknown = Character("???", color="#e0407f")
+define adrastea = Character("Adrastea", color="#e0407f")
 
 # | CREDITS SLIDE DURATION (SECONDS) | #
 define credits_hold = 4.0
@@ -20,7 +21,10 @@ define intro_hold = 4.5
 image bg_Park_Wo_A = "images/Adrastea/Scenes/Park_without_Adrastea.png"
 
 # | ADRASTEA | #
-image Adrastea_Park_Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
+image Adrastea Park Annoyed = "images/Adrastea/Character/Adrastea_Park_Annoyed.png"
+image Adrastea Park Suprised = "images/Adrastea/Character/Adrastea_Park_Suprised.png"
+image Adrastea Park Furious = "images/Adrastea/Character/Adrastea_Park_Furious.png"
+image Adrastea Park Shy = "images/Adrastea/Character/Adrastea_Park_Shy.png"
 
 # | INTRO IMAGES (CHANGE THESE PATHS TO YOUR OWN FILES) | #
 image intro_1 = "images/Intro/Background1.png"
@@ -357,69 +361,77 @@ label intro_choose_name:
     "*THUD*" with vpunch
 
     "You snap out of the moment. You look up and see..."
-    show Adrastea_Park_Annoyed at adrastea_enter with dissolve
+    show Adrastea Park Annoyed at adrastea_enter with dissolve
     "You bumped into a girl!"
-    a "Hey, watch where you're going weirdo!"
+    adrastea_unknown "Hey, watch where you're going weirdo!"
 
     menu:
         y "What should I reply?"
 
         "I'm so sorry, I didn't see you there!":
+            show Adrastea Park Suprised with Dissolve(0.15)
 
-            if mm_award_once("bump_sorry_fp", lambda: mm_add_fp(1)):
-                $ mm_show_fp(1)
-                pause 2.8
-
-            if not mm_is_unlocked("char_1"):
-                $ mm_unlock("char_1")
-                $ mm_show_unlock("ADRASTEA")
-                pause 2.8
+            if mm_award_once("bump_sorry_fp", lambda: mm_add_fp(10)):
+                $ mm_show_fp(10)
 
             if mm_award_once("bump_sorry_trust", lambda: mm_give_trust("char_1", 10)):
-                pause 2.8
+                pass                                  # mm_give_trust already shows the toast
 
-            a "...That's alright. Just be more careful next time."
+            adrastea_unknown "...That's alright. Just be more careful next time."
+            y "Maybe a bit too forward, but what is your name?"
+            adrastea "Hah! The ladies must like you. I'm Adrastea. And you are?"
 
-        "Hey, never touch me again!":
-
+                # | UNLOCK ADRASTEA | #
             if not mm_is_unlocked("char_1"):
                 $ mm_unlock("char_1")
                 $ mm_show_unlock("ADRASTEA")
-                pause 2.8
+
+            y "I'm [player_name]. Nice to meet you. Adrastea."
+            adrastea "Nice to meet you too, [player_name]. Well this is quite akward."
+            show Adrastea Park Shy with Dissolve(0.15)
+            y "Uhh yeah, i guess it is."
+
+
+
+
+
+
+        "Hey, never touch me again!":
+            show Adrastea Park Furious with Dissolve(0.15) # Fade op character image switch
 
             "You made her angry. No Feet Points this time."
 
             if mm_award_once("bump_angry_trust", lambda: mm_give_trust("char_1", -10)):
                 pause 2.8
 
-            a "Wow, there's no need to be so aggressive!"
+            adrastea_unknown "Wow, there's no need to be so aggressive!"
             y "Sorry... I'm just not in the mood right now."
 
     # | BOTH CHOICES COME TOGETHER HERE | #
-    a "...Anyway. I'm Adrastea."
-    a "And you are?"
+    adrastea_known "...Anyway. I'm Adrastea."
+    adrastea_known "And you are?"
 
     y "I'm [player_name]."
 
-    a "[player_name]... Alright. Not the worst way to meet someone."
+    adrastea_known "[player_name]... Alright. Not the worst way to meet someone."
 
     if walk_style == "music":
-        a "Next time, maybe take one earbud out. You almost took me down."
+        adrastea_known "Next time, maybe take one earbud out. You almost took me down."
     else:
-        a "You really weren't looking where you were going, were you?"
+        adrastea_known "You really weren't looking where you were going, were you?"
 
     menu:
-        a "So, where were you off to?"
+        adrastea_known "So, where were you off to?"
 
         "Downtown, want to come with me?":
             if mm_award_once("walk_downtown_trust", lambda: mm_give_trust("char_1", 5)):
                 pause 2.8
-            a "Hm. You're bold, I'll give you that."
-            a "Fine. But you're buying the first drink."
+            adrastea_known "Hm. You're bold, I'll give you that."
+            adrastea_known "Fine. But you're buying the first drink."
 
         "Nowhere special, just walking.":
-            a "Same. I came here to think."
-            a "...Walk with me, then. Quietly."
+            adrastea_known "Same. I came here to think."
+            adrastea_known "...Walk with me, then. Quietly."
 
     # | NEXT SCENE | #
     # scene bg_Downtown with fade
